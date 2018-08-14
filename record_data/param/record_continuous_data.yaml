@@ -1,0 +1,15 @@
+record_data: {
+  destination: "/home/pracsys/Dropbox/transfer/",
+  filename: "training_data/combined_all",
+  requested_data_ids: [1,2,3,4,5,7,8,9], # description in record_data.cpp
+  data_window_size: 10,
+  marker_no: 6,
+  save_images: false,
+  ref_marker_id: 0,
+  obj_marker_id: 5
+}
+
+play_bags: {
+  bag_directory: "/home/pracsys/Dropbox/transfer",
+  bag_files: ["ca_25_56","ca_25_57","ca_25_58","ca_25_59","ca_25_60","ca_25_61","ca_25_62","ca_25_63","ca_25_64","ca_25_65"]
+}

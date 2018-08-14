@@ -1,0 +1,9 @@
+<launch>
+  <rosparam command="load" file="$(find dexterous_manipulation)/param/keyboard.yaml" />
+  <rosparam command="load" file="$(find dexterous_manipulation)/param/gripper.yaml" />
+
+  <node name="dexterous_manipulation" pkg="dexterous_manipulation" type="keyboard" output="screen"/>
+  <node name="keyboard_input" pkg="keyboard_input" type="keyboard_input" output="screen"/>
+  <node name="keyboard_control" pkg="keyboard_control" type="keyboard_control" output="screen"/>
+  <node name="gripper_state_publisher" pkg="gripper_state_publisher" type="gripper_state_publisher_node"/>
+</launch>

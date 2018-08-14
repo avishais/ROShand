@@ -1,0 +1,9 @@
+<launch>
+  <node name="camera" pkg="usb_cam" type="usb_cam_node">
+	<param name="image_width" value="1024"/>
+	<param name="image_height" value="576"/>
+  </node> 
+  <node name="marker_tracker" pkg="marker_tracker" type="marker_tracker" output="screen">
+	<param name="show_image" value="false"/>
+  </node>
+</launch>

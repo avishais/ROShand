@@ -1,0 +1,5 @@
+<launch>
+  <rosparam command="load" file="$(find record_data)/param/record_continuous_data.yaml" />
+  <node name="record_data" pkg="record_data" type="record_data" output="screen"/> 
+  <node name="play_bags" pkg="record_data" type="play_bags" output="screen"/> 
+</launch>

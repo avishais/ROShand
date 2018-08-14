@@ -1,0 +1,6 @@
+<launch>
+
+  <include file="$(find dexterous_manipulation)/launch/model_t42.launch"/>
+  <include file="$(find gripper_nodes)/launch/model_t42_node.launch"/>
+
+</launch>

@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="gp_predict" type="gp_predict_node.py" name="test1" output="screen">
+    </node>
+</launch>

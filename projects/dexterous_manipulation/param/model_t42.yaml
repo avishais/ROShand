@@ -1,0 +1,5 @@
+servo_ids: [2,1] #You need to change these according to your setup
+servo_type: 'XM'
+servo_port: '/dev/ttyUSB0'
+openhand_type: 'Model_T42'
+direction: [1,1]
