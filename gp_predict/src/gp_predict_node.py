@@ -14,46 +14,26 @@ class Spin_predict(predict):
     base_pos = [0,0]
     base_theta = 0
     obj_pos = [0,0]
-    flag = 0
     R = []
 
-    mode_ = 1
-    # GP = []
+    mode_ = 5
 
     def __init__(self):
         predict.__init__(self, self.mode_)
-        # GP = predict(self.mode)
 
-        pub = rospy.Publisher('prediction', Float64MultiArray, queue_size=10)
-        pub_status = rospy.Publisher('prediction_status', Float64MultiArray, queue_size=10)
         rospy.Subscriber('/gripper/pos', Float32MultiArray, self.callbackGripperPos)
         rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
         s = rospy.Service('predict', StateAction, self.callbackPredictService)
 
         rospy.init_node('predict', anonymous=True)
-        rate = rospy.Rate(1) # 10hz
-        array = [0.,0.]
-        a = Float64MultiArray(data=array)
-        # a.data = [0, 0]
+        rate = rospy.Rate(15) # 15hz
         while not rospy.is_shutdown():
-            # rospy.loginfo(a)
-            # pub.publish(a)
-            # array[0] += 1.1
-            # array[1] += 2.4
-            # a = Float64MultiArray(data=array)
             rospy.spin()
             rate.sleep()
 
-    def is_empty(self, any_structure):
-        if any_structure:
-            return False
-        else:
-            return True
-
     def callbackGripperPos(self, msg):
         self.gripper_pos = msg.data
-        
 
     def callbackGripperLoad(self, msg):
         self.gripper_load = msg.data
@@ -84,17 +64,17 @@ class Spin_predict(predict):
         if self.mode_==8:
             sa = np.concatenate((self.obj_pos, self.gripper_pos, self.gripper_load, a), axis=0)
 
-        print(sa)
         sa = sa.reshape((1,self.state_action_dim))
         sa = self.normalize(sa, 1)
         s_next = self.propagate(sa).reshape(1, self.state_dim)
         s_next = self.denormalize(s_next)
-        print(type(s_next), s_next)
 
-        s_next = np.matmul(self.R.T, s_next[0].T)
+        # Take only image coordinates
+        s_next = s_next[0,:2]
 
+        # Reproject to image plane
+        s_next = np.matmul(self.R.T, s_next.T)
         s_next += self.base_pos
-        print(s_next.shape, s_next.T)
         
         return {'next_state': s_next}
 

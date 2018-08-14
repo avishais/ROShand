@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="track_path" type="track_node.py" name="track" output="screen">
+    </node>
+</launch>
