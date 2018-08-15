@@ -11,5 +11,5 @@ record_data: {
 
 play_bags: {
   bag_directory: "/home/pracsys/Dropbox/transfer",
-  bag_files: ["ca_25_56","ca_25_57","ca_25_58","ca_25_59","ca_25_60","ca_25_61","ca_25_62","ca_25_63","ca_25_64","ca_25_65"]
+  bag_files: ["ca_35_19","ca_35_20","ca_35_21","ca_35_22","ca_35_23","ca_35_24","ca_35_25","ca_35_26","ca_35_27","ca_35_28","ca_35_29","ca_35_30"]
 }

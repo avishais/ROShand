@@ -6,6 +6,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11")
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
   common_msgs_gl
   gripper_nodes
   roslib

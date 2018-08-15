@@ -111,7 +111,9 @@ class track():
                 pub.publish(self.KEY_S)
                 if iter+1==self.path.shape[0]:
                     self.enable = False
-                iter += 1
+
+                if np.linalg.norm(self.obj_pos-cur_set_point) < 0.5 or np.linalg.norm(self.obj_pos-cur_set_point) > np.linalg.norm(self.obj_pos-self.path[iter+1,:]):
+                    iter += 1
 
             # plt.show()
             # rospy.spin()
