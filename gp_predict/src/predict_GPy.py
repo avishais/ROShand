@@ -25,10 +25,11 @@ class predict:
 
     def __init__(self, mode = 5):
 
-        print('Loading training data...')
+        print('[gp_predict Gpy] Loading training data...')
         self.mode = mode
         Q = loadmat('/home/pracsys/Documents/workspace/adaptive_hand_model/data/Ca_25_' + str(mode) + '.mat')
         Qtrain = Q['Xtraining']
+        print('[gp_predict Gpy] Loaded training data of ' + str(Qtrain.shape[0]) + ' points.')
 
         if self.mode==1:
             self.state_action_dim = 4 
@@ -74,10 +75,10 @@ class predict:
         self.Ytrain_ = self.normalize(self.Ytrain, 2)
 
         # Load kd-tree
-        print("Loading data to kd-tree...")
+        print("[gp_predict Gpy] Constructing kd-tree...")
         # Xtrain_nn = self.Xtrain_# * W
         self.kdt = KDTree(self.Xtrain, leaf_size=10, metric='euclidean')
-        print("kd-tree loaded.")
+        print("[gp_predict pyGPs] kd-tree constructed. Ready to predict!")
 
     def normalize(self, data, c=1):
         if c == 1:
@@ -124,6 +125,11 @@ class predict:
         # s_next = np.random.normal(mu, sigma, self.state_dim)
         
         return mu#s_next
+
+    def countNN(self, sa):
+        idx = self.kdt.query_radius(sa, r=0.05)
+        return len(idx[0])
+
 
 
 
