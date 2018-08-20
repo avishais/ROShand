@@ -56,6 +56,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   StateAction.srv
+  StateAction2State.srv
   getNN.srv
   ActionChoice.srv
 )

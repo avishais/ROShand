@@ -3,6 +3,47 @@
 
 #include "plan.hpp"
 
+plan_hand::plan_hand() : node_handle_("~") {
+
+    subscribeTopicsServices();
+
+}
+
+void plan_hand::subscribeTopicsServices(){
+	srv_plan_ = node_handle_.advertiseService("/plan_hand/plan",&plan_hand::callbackPlan,this);
+}
+
+bool plan_hand::callbackPlan(planner::plan_req::Request& req, planner::plan_req::Response& res) {
+    Vector start = req.start;
+    Vector goal = req.goal;
+
+    if (start.size() != n || goal.size() != n) {
+        ROS_ERROR("[planner_node] Wrong start and/or goal inputs to planner.");
+        return true;   
+    }
+
+    plan(start, goal, 10); // Planning time: currently 10sec
+
+	return true;
+}
+
+void plan_hand::Spin() {
+    ros::Rate rate(15);
+    ROS_INFO("[planner node] Initiated planner - waiting for service request...");
+    while (ros::ok()) {
+
+        ros::spinOnce();
+		rate.sleep();
+    }
+}
+
+// -----------------------------------------------------------------------------------------
+
+bool isStateValid(const ob::State *state) {
+	return true;
+}
+
+
 ob::PlannerPtr plan_hand::allocatePlanner(ob::SpaceInformationPtr si, plannerType p_type)
 {
     switch (p_type)
@@ -36,20 +77,23 @@ void plan_hand::getPath(ob::ProblemDefinitionPtr pdef, ppMatrix &M) {
 	}
 }
 
+bool plan_hand::plan(Vector q_start, Vector q_goal, double runtime, plannerType p_type) {
 
-bool plan_hand::plan(Vector q_start, Vector q_goal, double runtime, plannerType p_type, planningObjective o_type) {
+    cout << "Initiating planner..." << endl;
 
 	// construct the state space we are planning in
-	ob::StateSpacePtr Q(new ob::RealVectorStateSpace(n)); // A-space - state space of the rod - R^6
+	ob::StateSpacePtr Q(new ob::RealVectorStateSpace(n)); 
 
-	// set the bounds for the A=R^6
 	ob::RealVectorBounds Qbounds(n);
-	Qbounds.setLow(0, MIN_X); // x_min
-	Qbounds.setHigh(0, MAX_X); // x_max
-	Qbounds.setLow(1, MIN_Y); // y_min
-	Qbounds.setHigh(1, MAX_Y); // y_max
-	Qbounds.setLow(2, -PI); // theta_min
-	Qbounds.setHigh(2, PI); // theta_max
+    // These are the boundaries for Cylinder 25 with feature conf. 5 (obj. position and gripper load)
+    Qbounds.setLow(0, -190); // x_min
+    Qbounds.setHigh(0, 375); // x_max
+    Qbounds.setLow(1, -416); // y_min
+    Qbounds.setHigh(1, -126); // y_max
+    Qbounds.setLow(2, -14); // load1_min
+    Qbounds.setHigh(2, 500); // load1_max
+    Qbounds.setLow(3, -516); // load2_min
+    Qbounds.setHigh(3, 22); // load2_max
 
 	// set the bound for the space
 	Q->as<ob::RealVectorStateSpace>()->setBounds(Qbounds);
@@ -81,13 +125,6 @@ bool plan_hand::plan(Vector q_start, Vector q_goal, double runtime, plannerType 
 	 // set the start and goal states
 	 pdef->setStartAndGoalStates(start, goal);
 
-	 // If this is an optimizing planner, set the optimization objective
-	 if (p_type==PLANNER_RRTSTAR) {
-		 // Create the optimization objective specified by our command-line argument.
-		 // This helper function is simply a switch statement.
-		 pdef->setOptimizationObjective(allocateObjective(si, o_type));
-	 }
-
 	 // create a planner for the defined space
 	 // To add a planner, the #include library must be added above
 	 ob::PlannerPtr planner = allocatePlanner(si, p_type);
@@ -102,11 +139,11 @@ bool plan_hand::plan(Vector q_start, Vector q_goal, double runtime, plannerType 
 	 //planner->printProperties(std::cout); // Prints some decisions such as multithreading, display approx solutions, and optimize?
 
 	 // print the settings for this space
-	 si->printSettings(std::cout); // Prints state space settings such as check resolution, segmant count factor and bounds
+	//  si->printSettings(std::cout); // Prints state space settings such as check resolution, segmant count factor and bounds
 	 //si->printProperties(std::cout); // Prints state space properties, average length, dimension ...
 
 	 // print the problem settings
-	 //pdef->print(std::cout); // Prints problem definition such as start and goal states and optimization objective
+	 pdef->print(std::cout); // Prints problem definition such as start and goal states and optimization objective
 
 	 // attempt to solve the problem within one second of planning time
 	 clock_t st = clock();
@@ -116,23 +153,21 @@ bool plan_hand::plan(Vector q_start, Vector q_goal, double runtime, plannerType 
 	if (solved) {
 		// get the goal representation from the problem definition (not the same as the goal state)
 		// and inquire about the found path
-		//ob::PathPtr path = pdef->getSolutionPath();
+		ob::PathPtr path = pdef->getSolutionPath();
 		std::cout << "Found solution in " << Ttime << " seconds." << std::endl;
 
 		Path.clear();
 		getPath(pdef, Path);
-		//StateValidityChecker svc;
-		//svc.printMatrix(Path);
 
 		// print the path to screen
-		//path->print(std::cout);  // Print as vectors
+		path->print(std::cout);  // Print as vectors
 
 		// Save path to file
-		//std::ofstream myfile;
-		//myfile.open("./paths/path.txt");
-		//og::PathGeometric& pog = static_cast<og::PathGeometric&>(*path); // Transform into geometric path class
-		//pog.printAsMatrix(myfile); // Print as matrix to file
-		//myfile.close();
+		std::ofstream myfile;
+		myfile.open("/home/pracsys/catkin_ws/src/rutgers_collab/src/planner/paths/path.txt");
+		og::PathGeometric& pog = static_cast<og::PathGeometric&>(*path); // Transform into geometric path class
+		pog.printAsMatrix(myfile); // Print as matrix to file
+		myfile.close();
 	}
 	 else
 	 std::cout << "No solution found" << std::endl;

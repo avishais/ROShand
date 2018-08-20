@@ -37,6 +37,7 @@ class Spin_predict(predict):
         s1 = rospy.Service('predict', StateAction, self.callbackPredictService)
         s2 = rospy.Service('NumNN', getNN, self.callbackNumNNService)
         s3 = rospy.Service('ChooseAction', ActionChoice, self.callbackChooseAction)
+        s4 = rospy.Service('predictWithState', StateAction2State, self.callbackPredictServiceWithState)
 
         rospy.init_node('predict', anonymous=True)
         rate = rospy.Rate(15) # 15hz
@@ -153,20 +154,11 @@ class Spin_predict(predict):
 
         sa = sa.reshape((1,self.state_action_dim))
 
-        # print('base' + str(self.base_pos) + ' ' + str(self.base_theta))
-        # print('Raw sa: ' + str(sa))
-
         sa = self.normalize(sa, 1)
-
-        # print('Normalized sa: ' + str(sa))
 
         s_next = self.propagate(sa).reshape(1, self.state_dim)
 
-        # print('s_next b4 denormz: ' + str(s_next))
-
         s_next = self.denormalize(s_next)
-
-        # print('s_next denormz: ' + str(s_next))
 
         # Take only image coordinates
         s_next = s_next[0,:2]
@@ -177,6 +169,23 @@ class Spin_predict(predict):
 
         # print('s_next in image space: ' + str(s_next))
         
+        return {'next_state': s_next}
+
+    # Predicts the next step by calling the GP class - gets external state (for planner)
+    def callbackPredictServiceWithState(self, req):
+        s = np.array(req.state)
+        a = np.array(req.action)
+
+        sa = np.concatenate((s, a), axis=0)
+
+        sa = sa.reshape((1,self.state_action_dim))
+
+        sa = self.normalize(sa, 1)
+
+        s_next = self.propagate(sa).reshape(1, self.state_dim)
+
+        s_next = self.denormalize(s_next)
+     
         return {'next_state': s_next}
 
     # Counts the number of NN in the data for the current state-action

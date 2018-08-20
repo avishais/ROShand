@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from common_msgs_gl.srv import SendBool
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, Float64MultiArray
 from marker_tracker.msg import ImageSpacePoseMsg
 from std_msgs.msg import UInt32
 import math
@@ -34,11 +34,11 @@ class track():
 
 
     def tracked_path(self, obj_pos):
-        self.path = np.empty([5,2])
-        for i in range(1,self.path.shape[0]):
-            self.path[i-1,:] = np.array([obj_pos[0]+i*20, obj_pos[1]]).reshape(1,2)
-        # for i in range(2,15):
-        #     self.path = np.append(self.path, np.array([self.path[-1,0]+0.8, self.path[-1,1]+0.8]).reshape(1,2), axis=0) 
+        self.path = np.empty([3,2])
+        for i in range(1,self.path.shape[0]+1):
+            self.path[i-1,:] = np.array([obj_pos[0]-i*12, obj_pos[1]+i*10]).reshape(1,2)
+        for i in range(2,7):
+            self.path = np.append(self.path, np.array([self.path[-1,0]+10, self.path[-1,1]]).reshape(1,2), axis=0) 
 
         plt.plot(self.path[:,0], self.path[:,1],'.b')
         plt.draw()
@@ -81,20 +81,24 @@ class track():
 
     def __init__(self):
         iter = 0
+        carrot_point = np.array([-1, -1])
         
         sr = rospy.Service('/trackEnable', SendBool, self.callbackTrackEnable)
         # rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
         pub = rospy.Publisher('/keyboard_input', UInt32, queue_size=10)
+        pub_carrot = rospy.Publisher('/carrot_point', Float64MultiArray, queue_size=10)
 
         rospy.init_node('track', anonymous=True)
         rate = rospy.Rate(self.freq) # 15hz
         last_checkpoint = self.obj_pos
         while not rospy.is_shutdown():
+            pub_carrot.publish(data=carrot_point)
+
             if self.ready:
                 carrot_point = self.path[iter,:]
             if self.enable and self.ready:
-
+                
                 print(iter)
 
                 print('obj. pos: ' + str(self.obj_pos) + ', waypoint: ' + str(carrot_point) + ', dist.: (' + str(np.linalg.norm(self.obj_pos-last_checkpoint)) + ', ' + str(np.linalg.norm(self.obj_pos-self.path[iter+1,:]))) + ')'
