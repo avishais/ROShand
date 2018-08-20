@@ -34,9 +34,9 @@ class track():
 
 
     def tracked_path(self, obj_pos):
-        self.path = np.empty([20,2])
+        self.path = np.empty([5,2])
         for i in range(1,self.path.shape[0]):
-            self.path[i-1,:] = np.array([obj_pos[0]+i*1, obj_pos[1]]).reshape(1,2)
+            self.path[i-1,:] = np.array([obj_pos[0]+i*20, obj_pos[1]]).reshape(1,2)
         # for i in range(2,15):
         #     self.path = np.append(self.path, np.array([self.path[-1,0]+0.8, self.path[-1,1]+0.8]).reshape(1,2), axis=0) 
 
@@ -70,11 +70,11 @@ class track():
             pass
 
 
-    def choose_action_client(self, cur_set_point):
+    def choose_action_client(self, carrot_point):
         rospy.wait_for_service('ChooseAction')
         try:
             ChooseAction = rospy.ServiceProxy('ChooseAction', ActionChoice)
-            res = ChooseAction(cur_set_point)
+            res = ChooseAction(carrot_point)
             return res.key
         except rospy.ServiceException, e:
             print("Service call failed: %s" % e)
@@ -89,27 +89,28 @@ class track():
 
         rospy.init_node('track', anonymous=True)
         rate = rospy.Rate(self.freq) # 15hz
+        last_checkpoint = self.obj_pos
         while not rospy.is_shutdown():
             if self.ready:
-                cur_set_point = self.path[iter,:]
+                carrot_point = self.path[iter,:]
             if self.enable and self.ready:
 
                 print(iter)
 
-                print('obj. pos: ' + str(self.obj_pos) + ', waypoint: ' + str(cur_set_point) + ', dist.: ' + str(np.linalg.norm(self.obj_pos-cur_set_point)))
-                if np.linalg.norm(self.obj_pos-cur_set_point) < 0.5 or np.linalg.norm(self.obj_pos-cur_set_point) > np.linalg.norm(self.obj_pos-self.path[iter+1,:]):
+                print('obj. pos: ' + str(self.obj_pos) + ', waypoint: ' + str(carrot_point) + ', dist.: (' + str(np.linalg.norm(self.obj_pos-last_checkpoint)) + ', ' + str(np.linalg.norm(self.obj_pos-self.path[iter+1,:]))) + ')'
+                if np.linalg.norm(self.obj_pos-carrot_point) < 1 or np.linalg.norm(self.obj_pos-last_checkpoint) > np.linalg.norm(self.obj_pos-self.path[iter+1,:]):
                     iter += 1
                     print('Moved to next waypoint: ' + str(self.path[iter,:]))
 
-                cur_set_point = self.path[iter,:]
-                a = self.choose_action_client(cur_set_point)
+                carrot_point = self.path[iter,:]
+                a = self.choose_action_client(carrot_point)
+                print('Publishing action: ' + str(a))
                 pub.publish(a)
-                rospy.sleep(1/self.freq)
+                rospy.sleep(0*1/self.freq+1)
                 pub.publish(self.KEY_S)
-                if iter+1==self.path.shape[0]:
+                if iter+1==self.path.shape[0] or np.linalg.norm(self.obj_pos-self.path[-1]) < 1:
+                    print('Reached goal!!!')
                     self.enable = False
-
-                
 
             # plt.show()
             # rospy.spin()

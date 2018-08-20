@@ -5,6 +5,7 @@ from sklearn.neighbors import KDTree #pip install -U scikit-learn
 import GPy
 import time
 from scipy.io import loadmat
+from matplotlib import pyplot as plt
 
 class predict:
     K = 100 # Number of NN
@@ -15,6 +16,8 @@ class predict:
 
     Xtrain = np.array([])
     Ytrain = np.array([])
+    Xtrain_nn = np.array([])
+    W = np.array([])
 
     x_max_X = np.array([])
     x_min_X = np.array([])
@@ -27,9 +30,9 @@ class predict:
 
         print('[gp_predict Gpy] Loading training data...')
         self.mode = mode
-        Q = loadmat('/home/pracsys/Documents/workspace/adaptive_hand_model/data/Ca_25_' + str(mode) + '.mat')
+        Q = loadmat('/home/pracsys/Documents/workspace/adaptive_hand_model/data/Cb_20_' + str(mode) + '.mat')
         Qtrain = Q['Xtraining']
-        print('[gp_predict Gpy] Loaded training data of ' + str(Qtrain.shape[0]) + ' points.')
+        print('[gp_predict Gpy] Loaded training data of ' + str(Qtrain.shape[0]) + ' points in feature conf. ' + str(mode) + '.')
 
         if self.mode==1:
             self.state_action_dim = 4 
@@ -74,10 +77,14 @@ class predict:
         self.Xtrain_ = self.normalize(self.Xtrain, 1)
         self.Ytrain_ = self.normalize(self.Ytrain, 2)
 
+        # Weight matrix for the kd-tree
+        self.W = np.concatenate( ( np.array([np.sqrt(1000.), np.sqrt(1000.)]).reshape(1,2), np.ones((1,self.state_dim)) ), axis=1 ).T
+        self.W = self.W.reshape((self.W.shape[0],))
+
         # Load kd-tree
         print("[gp_predict Gpy] Constructing kd-tree...")
-        # Xtrain_nn = self.Xtrain_# * W
-        self.kdt = KDTree(self.Xtrain, leaf_size=10, metric='euclidean')
+        self.Xtrain_nn = self.Xtrain * self.W
+        self.kdt = KDTree(self.Xtrain_nn, leaf_size=10, metric='euclidean')
         print("[gp_predict pyGPs] kd-tree constructed. Ready to predict!")
 
     def normalize(self, data, c=1):
@@ -103,9 +110,16 @@ class predict:
         return data
 
     def predict(self, sa):
-        idx = self.kdt.query(sa, k=self.K, return_distance=False)
+        idx = self.kdt.query(sa*self.W, k=self.K, return_distance=False)
         X_nn = self.Xtrain[idx,:].reshape(self.K, self.state_action_dim)
         Y_nn = self.Ytrain[idx,:].reshape(self.K, self.state_dim)
+
+        # Plot NN
+        # st = sa[0]#.reshape(1,self.state_action_dim)
+        # fig = plt.figure(1)
+        # plt.plot(X_nn[:,0],X_nn[:,1],'.y')
+        # plt.plot(st[0],st[1],'ob')
+        # plt.show()
 
         mu = np.zeros(self.state_dim)
         sigma = np.zeros(self.state_dim)
@@ -118,6 +132,7 @@ class predict:
 
             mu[dim], sigma[dim] = m.predict(sa.reshape(1,self.state_action_dim))
 
+        plt.plot(mu[0],mu[1],'sr')
         return mu, sigma
 
     def propagate(self, sa):

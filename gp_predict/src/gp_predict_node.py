@@ -17,7 +17,8 @@ class Spin_predict(predict):
     base_theta = 0
     obj_pos = [0,0]
     R = []
-    A = np.array([[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06]])#, [0.06, 0.06]])
+    A = np.array([[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06], [0.06, 0.06]])
+    count = 1
 
     KEY_W = 119
     KEY_X = 120
@@ -52,9 +53,14 @@ class Spin_predict(predict):
     def callbackMarkers(self, msg):
         try:
             self.base_pos = np.array([msg.posx[msg.ids.index(0)], msg.posy[msg.ids.index(0)]])
-            self.base_theta = math.pi - msg.angles[msg.ids.index(0)]
+            bt = math.pi - msg.angles[msg.ids.index(0)]
+
+            self.base_theta  = (self.count-1)/self.count * self.base_theta + bt/self.count
+            if self.count > 1e7:
+                self.count = 2
+            else:
+                self.count += 1
         except:
-            
             pass
         try:
             self.obj_pos = np.array([msg.posx[msg.ids.index(5)], msg.posy[msg.ids.index(5)]])
@@ -69,7 +75,7 @@ class Spin_predict(predict):
         cur_set_point = req.set_point
 
         if self.mode_==1:
-            s = np.concatenate((self.obj_pos), axis=0)
+            s = self.obj_pos
         if self.mode_==4:
             s = np.concatenate((self.obj_pos, self.gripper_pos), axis=0)
         if self.mode_==5:
@@ -77,9 +83,14 @@ class Spin_predict(predict):
         if self.mode_==8:
             s = np.concatenate((self.obj_pos, self.gripper_pos, self.gripper_load), axis=0)
 
-        print(np.matmul(self.R.T, self.obj_pos)+self.base_pos, cur_set_point)
+        print('----------------------------')
+        print('Current position: ', np.matmul(self.R.T, self.obj_pos)+self.base_pos, ', waypoint: ', cur_set_point, '--:')
+        print('Current load: ', self.gripper_load)
+        print('Current gripper pos: ' + str(self.gripper_pos))
+        print('base' + str(self.base_pos) + ' ' + str(self.base_theta))
 
         d_max = 1e9
+        a_max = self.A[0,:]
         for i in range(self.A.shape[0]):
             a = self.A[i,:]
             sa = np.concatenate((s, a), axis=0)
@@ -97,28 +108,35 @@ class Spin_predict(predict):
             s_next += self.base_pos
 
             d = np.linalg.norm(s_next-cur_set_point)
-            # print("Action " +str(self.A[i,:]) + " predicts next state " + str(s_next) + " with distance " + str(d))
+            print("Action " +str(self.A[i,:]) + " predicts next state " + str(s_next) + " with distance " + str(d))
             if d < d_max:
                 d_max = d
-                a = self.A[i,:]
+                a_max = self.A[i,:]
                 s_next_s = s_next
 
-        # print("*** predicted next state: " + str(s_next_s) + " with action: " + str(a) + " planned to have distance " + str(np.linalg.norm(s_next_s-cur_set_point)))
-
+        a = a_max
         if a[0] < 0 and a[1] < 0: # Down
-            return {'key': self.KEY_W}
+            K = self.KEY_W
+            # return {'key': self.KEY_W}
 
         if a[0] > 0 and a[1] > 0: # Up
-            return {'key': self.KEY_X}
+            K = self.KEY_X
+            # return {'key': self.KEY_X}
         
         if a[0] < 0 and a[1] > 0: # Left
-            return {'key': self.KEY_A}
+            K = self.KEY_D
+            # return {'key': self.KEY_A}
 
         if a[0] > 0 and a[1] < 0: # right
-            return {'key': self.KEY_D}
+            K = self.KEY_A
+            # return {'key': self.KEY_D}
 
         if a[0] == 0 and a[1] == 0:
-            return {'key': self.KEY_S}
+            K = self.KEY_S
+            # return {'key': self.KEY_S}
+
+        print("*** predicted next state: " + str(s_next_s) + " with action: " + str(a) + "(" + str(K) + ")" + " planned to have distance " + str(np.linalg.norm(s_next_s-cur_set_point)))
+        return {'key': K}
 
     # Predicts the next step by calling the GP class
     def callbackPredictService(self, req):
