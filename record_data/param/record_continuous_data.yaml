@@ -11,4 +11,4 @@ record_data: {
 
 play_bags: {
   bag_directory: "/home/pracsys/Dropbox/transfer",
-  bag_files: ["cb_20_01","cb_20_02","cb_20_03","cb_20_04","cb_20_05","cb_20_06","cb_20_07","cb_20_08","cb_20_09","cb_20_10","cb_20_11","cb_20_12","cb_20_13","cb_20_14","cb_20_15","cb_20_16","cb_20_17","cb_20_18","cb_20_19","cb_20_20","cb_20_21","cb_20_22","cb_20_23","cb_20_24","cb_20_25"]}
+  bag_files: ["c_20_d_12"]}

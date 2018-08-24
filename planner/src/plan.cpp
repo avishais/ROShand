@@ -22,19 +22,26 @@ bool plan_hand::callbackPlan(planner::plan_req::Request& req, planner::plan_req:
         return true;   
     }
 
-    plan(start, goal, 10); // Planning time: currently 10sec
+    res.solved = plan(start, goal, 150); // Planning time: currently 10sec
 
 	return true;
 }
 
 void plan_hand::Spin() {
-    ros::Rate rate(15);
-    ROS_INFO("[planner node] Initiated planner - waiting for service request...");
-    while (ros::ok()) {
+    
+    Vector s = {71.8, -410, 70, -70};
+    Vector g = {187, -387, 121, -142};
 
-        ros::spinOnce();
-		rate.sleep();
-    }
+    plan(s, g, 1500);
+    
+    
+    // ros::Rate rate(15);
+    // ROS_INFO("[planner node] Initiated planner - waiting for service request...");
+    // while (ros::ok()) {
+
+    //     ros::spinOnce();
+	// 	rate.sleep();
+    // }
 }
 
 // -----------------------------------------------------------------------------------------
@@ -146,9 +153,9 @@ bool plan_hand::plan(Vector q_start, Vector q_goal, double runtime, plannerType 
 	 pdef->print(std::cout); // Prints problem definition such as start and goal states and optimization objective
 
 	 // attempt to solve the problem within one second of planning time
-	 clock_t st = clock();
+	 auto sT = Clock::now();
 	 ob::PlannerStatus solved = planner->solve(runtime);
-	 double Ttime = double(clock() - st) / CLOCKS_PER_SEC;
+	 double Ttime = std::chrono::duration<double>(Clock::now() - sT).count();
 
 	if (solved) {
 		// get the goal representation from the problem definition (not the same as the goal state)
@@ -163,12 +170,14 @@ bool plan_hand::plan(Vector q_start, Vector q_goal, double runtime, plannerType 
 		path->print(std::cout);  // Print as vectors
 
 		// Save path to file
-		std::ofstream myfile;
-		myfile.open("/home/pracsys/catkin_ws/src/rutgers_collab/src/planner/paths/path.txt");
-		og::PathGeometric& pog = static_cast<og::PathGeometric&>(*path); // Transform into geometric path class
-		pog.printAsMatrix(myfile); // Print as matrix to file
-		myfile.close();
+		// std::ofstream myfile;
+		// myfile.open("/home/pracsys/catkin_ws/src/rutgers_collab/src/planner/paths/path.txt");
+		// og::PathGeometric& pog = static_cast<og::PathGeometric&>(*path); // Transform into geometric path class
+		// pog.printAsMatrix(myfile); // Print as matrix to file
+		// myfile.close();
 	}
 	 else
-	 std::cout << "No solution found" << std::endl;
+	    std::cout << "No solution found" << std::endl;
+
+    return solved;
 }

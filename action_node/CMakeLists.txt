@@ -8,7 +8,15 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-generate_messages()
+add_service_files(
+  FILES
+  empty.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+)
 
 catkin_package(
 )

@@ -2,7 +2,7 @@
 import rospy
 from std_msgs.msg import Float64MultiArray, Float32MultiArray
 from marker_tracker.msg import ImageSpacePoseMsg
-from gp_predict.srv import StateAction, getNN, ActionChoice
+from gp_predict.srv import StateAction, getNN, ActionChoice, StateAction2State
 import math
 import numpy as np
 
@@ -176,6 +176,9 @@ class Spin_predict(predict):
         s = np.array(req.state)
         a = np.array(req.action)
 
+        print('-----------------------------------------------------------------------------------------------')
+        print('state: ' + str(s) + ', action: ' + str(a))
+
         sa = np.concatenate((s, a), axis=0)
 
         sa = sa.reshape((1,self.state_action_dim))
@@ -185,8 +188,10 @@ class Spin_predict(predict):
         s_next = self.propagate(sa).reshape(1, self.state_dim)
 
         s_next = self.denormalize(s_next)
+
+        print('Predicted next state: ' + str(s_next))
      
-        return {'next_state': s_next}
+        return {'next_state': s_next[0]}
 
     # Counts the number of NN in the data for the current state-action
     def callbackNumNNService(self, req):

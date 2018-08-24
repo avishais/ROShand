@@ -1,12 +1,13 @@
 <launch>
 
-  <arg name="recordData" default="false" />
+  <arg name="recordData" default="true" />
 
   <rosparam command="load" file="$(find dexterous_manipulation)/param/keyboard.yaml" />
   <rosparam command="load" file="$(find dexterous_manipulation)/param/gripper.yaml" />
 
   <include file="$(find dexterous_manipulation)/launch/model_t42.launch"/>
   <include file="$(find gripper_nodes)/launch/model_t42_node.launch"/>
+  <!--<include file="$(find gp_predict)/launch/predict.launch"/>-->
 
   <node name="camera" pkg="usb_cam" type="usb_cam_node">
 	<param name="image_width" value="1024"/>
@@ -14,7 +15,7 @@
   </node>
 
  <node pkg="rosbag" type="record" name="rosbag_record_data"
-       args="record -O /home/pracsys/Dropbox/transfer/cb_20_26 /gripper_t42/vel_ref_monitor /gripper_t42/pos_ref_monitor /marker_tracker/image_space_pose_msg /gripper/load /gripper/pos /gripper/curr"
+       args="record -O /home/pracsys/Dropbox/transfer/c_20_s_12 /gripper_t42/vel_ref_monitor /gripper_t42/pos_ref_monitor /marker_tracker/image_space_pose_msg /gripper/load /gripper/pos /gripper/curr /keyboard_input"
        if="$(arg recordData)" />
 
   <node pkg="dexterous_manipulation" type="plot_obj_pos.py" name="Plot" output="screen"></node>

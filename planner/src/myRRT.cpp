@@ -101,11 +101,16 @@ ompl::base::PlannerStatus ompl::geometric::RRT::solve(const base::PlannerTermina
     base::Goal *goal = pdef_->getGoal().get();
     auto *goal_s = dynamic_cast<base::GoalSampleableRegion *>(goal);
 
+    goalState_.resize(n_);
+    retrieveStateVector(pis_.nextGoal(), goalState_);
+
     while (const base::State *st = pis_.nextStart())
     {
         auto *motion = new Motion(si_);
         si_->copyState(motion->state, st);
-        nn_->add(motion);
+        motion->action.push_back(0);
+        motion->action.push_back(0);
+        nn_->add(motion);       
     }
 
     if (nn_->size() == 0)
@@ -125,6 +130,7 @@ ompl::base::PlannerStatus ompl::geometric::RRT::solve(const base::PlannerTermina
     auto *rmotion = new Motion(si_);
     base::State *rstate = rmotion->state;
     base::State *xstate = si_->allocState();
+    base::State *dstate = si_->allocState();
 
     while (!ptc)
     {
@@ -136,48 +142,31 @@ ompl::base::PlannerStatus ompl::geometric::RRT::solve(const base::PlannerTermina
 
         /* find closest state in the tree */
         Motion *nmotion = nn_->nearest(rmotion);
-        base::State *dstate = rstate;
+        si_->copyState(dstate, nmotion->state);
 
-        /* find state to add */
-        double d = si_->distance(nmotion->state, rstate);
-        if (d > maxDistance_)
+        /* Choose random action */
+        Vector a = A[rng_.uniformInt(0,A.size()-1)]; 
+
+        std::cout << "-----\n";
+        /* Propagate by predicting next state (GP) */
+        predict(dstate, a); // dstate is updated with the new state
+
+        if (1) //si_->checkMotion(nmotion->state, dstate))
         {
-            si_->getStateSpace()->interpolate(nmotion->state, rstate, maxDistance_ / d, xstate);
-            dstate = xstate;
-        }
+            Motion *motion = new Motion(si_);
+            si_->copyState(motion->state, dstate);
+            motion->parent = nmotion;
+            motion->action.push_back(a[0]);
+            motion->action.push_back(a[1]);
+            nn_->add(motion);
 
-        if (si_->checkMotion(nmotion->state, dstate))
-        {
-            if (addIntermediateStates_)
-            {
-                std::vector<base::State *> states;
-                const unsigned int count = si_->getStateSpace()->validSegmentCount(nmotion->state, dstate);
+            printStateVector(motion->parent->state);
+            std::cout << nn_->size() << std::endl;
 
-                if (si_->getMotionStates(nmotion->state, dstate, states, count, true, true))
-                    si_->freeState(states[0]);
-
-                for (std::size_t i = 1; i < states.size(); ++i)
-                {
-                    Motion *motion = new Motion;
-                    motion->state = states[i];
-                    motion->parent = nmotion;
-                    nn_->add(motion);
-
-                    nmotion = motion;
-                }
-            }
-            else
-            {
-                Motion *motion = new Motion(si_);
-                si_->copyState(motion->state, dstate);
-                motion->parent = nmotion;
-                nn_->add(motion);
-
-                nmotion = motion;
-            }
+            nmotion = motion;
 
             double dist = 0.0;
-            bool sat = goal->isSatisfied(nmotion->state, &dist);
+            bool sat = checkSubspaceGoal(motion->state, dist); //goal->isSatisfied(nmotion->state, &dist);
             if (sat)
             {
                 approxdif = dist;
@@ -211,6 +200,8 @@ ompl::base::PlannerStatus ompl::geometric::RRT::solve(const base::PlannerTermina
             mpath.push_back(solution);
             solution = solution->parent;
         }
+
+        save2file(mpath);
 
         /* set the solution path */
         auto path(std::make_shared<PathGeometric>(si_));
@@ -269,6 +260,34 @@ void ompl::geometric::RRT::updateStateVector(const ob::State *state, Vector q) {
 	}
 }
 
+void ompl::geometric::RRT::printStateVector(const ob::State *state) {
+	// cast the abstract state type to the type we expect
+	const ob::RealVectorStateSpace::StateType *Q = state->as<ob::RealVectorStateSpace::StateType>();
+
+    std::cout << "q: ["; 
+	for (unsigned i = 0; i < n_; i++) 
+		std::cout << Q->values[i] << " "; 
+    std::cout << "]\n";
+	
+}
+
+bool ompl::geometric::RRT::checkSubspaceGoal(const ob::State *st, double &dist) {
+
+    Vector state(n_);
+    retrieveStateVector(st, state);
+
+    double sum = 0;
+    for (int i = 0; i < 2; i++)
+        sum += (state[i]-goalState_[i])*(state[i]-goalState_[i]);
+
+    dist = sqrt(sum);
+
+    if (dist < 2)
+        return true;
+    else
+        return false;
+}
+
 void ompl::geometric::RRT::predict(ob::State *st, Vector action) {
 
     Vector cur_state(n_);
@@ -283,4 +302,31 @@ void ompl::geometric::RRT::predict(ob::State *st, Vector action) {
     Vector next_state = srv.response.next_state;
 
     updateStateVector(st, next_state);
+}
+
+void ompl::geometric::RRT::save2file(std::vector<Motion*> mpath) {
+
+    std::cout << "Logging path to files..." << std::endl;
+
+	Vector q(n_);
+
+    // Open a_path file
+    std::ofstream pathfile, actionfile;
+    pathfile.open("/home/pracsys/catkin_ws/src/rutgers_collab/src/planner/paths/path.txt");
+    actionfile.open("/home/pracsys/catkin_ws/src/rutgers_collab/src/planner/paths/actionPath.txt");
+
+    for (int i = mpath.size()-1 ; i >= 0; i--) {
+        retrieveStateVector(mpath[i]->state, q);
+        for (int j = 0; j < n_; j++) {
+            pathfile << q[j] << " ";
+        }
+        pathfile << std::endl;
+
+        if (i > 0)
+            actionfile << mpath[i-1]->action[0] << " " << mpath[i-1]->action[1] << std::endl;
+        else
+            actionfile << 0 << " " << 0 << std::endl;
+    }
+    pathfile.close();
+    actionfile.close();
 }

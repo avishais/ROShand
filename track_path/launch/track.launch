@@ -3,7 +3,6 @@
 	
     <node pkg="track_path" type="track_node.py" name="track" output="screen"></node>
     
-
     <node pkg="rosbag" type="record" name="rosbag_record_data"
        args="record -O /home/pracsys/Dropbox/transfer/pt_01 /gripper_t42/vel_ref_monitor /gripper_t42/pos_ref_monitor /marker_tracker/image_space_pose_msg /gripper/load /gripper/pos /gripper/curr /carrot_point /camera/image_raw"
        if="$(arg recordData)" />
