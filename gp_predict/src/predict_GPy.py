@@ -26,7 +26,7 @@ class predict:
 
     kdt = []
 
-    def __init__(self, mode = 5):
+    def __init__(self, mode = 1):
 
         print('[gp_predict Gpy] Loading training data...')
         self.mode = mode
@@ -37,27 +37,35 @@ class predict:
         if self.mode==1:
             self.state_action_dim = 4 
             self.state_dim = 2
+            self.W = np.array([3, 3, 1, 1])
         if self.mode==2:
             self.state_action_dim = 8 
             self.state_dim = 6
+            self.W = np.array([3, 3, 1, 1, 1, 1, 1, 1])
         if self.mode==3:
             self.state_action_dim = 12 
             self.state_dim = 10
+            self.W = np.array([3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3])
         if self.mode==4:
             self.state_action_dim = 6 
             self.state_dim = 4
+            self.W = np.ones((1,self.state_action_dim))
         if self.mode==5:
             self.state_action_dim = 6 
             self.state_dim = 4
+            self.W = np.array([60, 60, 1, 1, 3, 3])
         if self.mode==6:
             self.state_action_dim = 14 
             self.state_dim = 12
+            self.W = np.ones((1,self.state_action_dim))
         if self.mode==7:
             self.state_action_dim = 16
             self.state_dim = 14
+            self.W = np.ones((1,self.state_action_dim))
         if self.mode==8:
             self.state_action_dim = 8
             self.state_dim = 6
+            self.W = np.array([5, 5, 3, 3, 1, 1, 3, 3])
 
         self.Xtrain = Qtrain[:,0:self.state_action_dim]
         self.Ytrain = Qtrain[:,self.state_action_dim:]
@@ -78,7 +86,7 @@ class predict:
         self.Ytrain_ = self.normalize(self.Ytrain, 2)
 
         # Weight matrix for the kd-tree
-        self.W = np.concatenate( ( np.array([np.sqrt(1000.), np.sqrt(1000.)]).reshape(1,2), np.ones((1,self.state_dim)) ), axis=1 ).T
+        # self.W = np.concatenate( ( np.array([np.sqrt(1000.), np.sqrt(1000.)]).reshape(1,2), np.ones((1,self.state_dim)) ), axis=1 ).T
         self.W = self.W.reshape((self.W.shape[0],))
 
         # Load kd-tree

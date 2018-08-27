@@ -26,7 +26,7 @@ class Spin_predict(predict):
     KEY_D = 100
     KEY_A = 97
 
-    mode_ = 5
+    mode_ = 1
 
     def __init__(self):
         predict.__init__(self, self.mode_)
@@ -99,7 +99,7 @@ class Spin_predict(predict):
             sa = sa.reshape((1,self.state_action_dim))
             sa = self.normalize(sa, 1)
             s_next = self.propagate(sa).reshape(1, self.state_dim)
-            s_next = self.denormalize(s_next)
+            s_next = self.denormalize(s_next, 2)
 
             # Take only image coordinates
             s_next = s_next[0,:2]
@@ -158,7 +158,7 @@ class Spin_predict(predict):
 
         s_next = self.propagate(sa).reshape(1, self.state_dim)
 
-        s_next = self.denormalize(s_next)
+        s_next = self.denormalize(s_next, 2)
 
         # Take only image coordinates
         s_next = s_next[0,:2]
@@ -187,7 +187,7 @@ class Spin_predict(predict):
 
         s_next = self.propagate(sa).reshape(1, self.state_dim)
 
-        s_next = self.denormalize(s_next)
+        s_next = self.denormalize(s_next, 2)
 
         print('Predicted next state: ' + str(s_next))
      
