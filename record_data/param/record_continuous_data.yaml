@@ -4,11 +4,11 @@ record_data: {
   requested_data_ids: [1,2,3,4,5,7,8,9], # description in record_data.cpp
   data_window_size: 10,
   marker_no: 6,
-  save_images: false,
+  save_images: true,
   ref_marker_id: 0,
   obj_marker_id: 5
 }
 
 play_bags: {
   bag_directory: "/home/pracsys/Dropbox/transfer",
-  bag_files: ["ca_20_61","ca_20_62","ca_20_63","ca_35_31","ca_35_32"]}
+  bag_files: ["ca_26_test1","ca_36_test1","ca_36_test2"]}

@@ -30,7 +30,7 @@ class predict:
 
         print('[gp_predict Gpy] Loading training data...')
         self.mode = mode
-        Q = loadmat('/home/pracsys/Documents/workspace/adaptive_hand_model/data/Cb_20_' + str(mode) + '.mat')
+        Q = loadmat('/home/pracsys/Documents/workspace/adaptive_hand_model/data/Ca_20_' + str(mode) + '.mat')
         Qtrain = Q['Xtraining']
         print('[gp_predict Gpy] Loaded training data of ' + str(Qtrain.shape[0]) + ' points in feature conf. ' + str(mode) + '.')
 
