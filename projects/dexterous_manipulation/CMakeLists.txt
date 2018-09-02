@@ -8,12 +8,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   common_msgs_gl
-  opencv2
   cv_bridge
   gripper_nodes
   roslib
   cmake_modules
 )
+
+find_package(opencv2)
 
 catkin_package(
   INCLUDE_DIRS include

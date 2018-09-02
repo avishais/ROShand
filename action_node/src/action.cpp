@@ -46,7 +46,6 @@ bool actionPub::callbackRerun(std_srvs::Empty::Request&, std_srvs::Empty::Respon
 	return true;
 }
 
-
 void actionPub::get_action_path(std::string file) {
 
 	std::ifstream myfile;

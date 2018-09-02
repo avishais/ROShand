@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="recordData" default="true" />
+  <arg name="recordData" default="false" />
 
   <rosparam command="load" file="$(find dexterous_manipulation)/param/keyboard.yaml" />
   <rosparam command="load" file="$(find dexterous_manipulation)/param/gripper.yaml" />
@@ -15,7 +15,7 @@
   </node>
 
  <node pkg="rosbag" type="record" name="rosbag_record_data"
-       args="record -O /home/pracsys/Dropbox/transfer/ca_45_14 /gripper_t42/vel_ref_monitor /gripper_t42/pos_ref_monitor /marker_tracker/image_space_pose_msg /gripper/load /gripper/pos /gripper/curr /keyboard_input"
+       args="record -O /home/pracsys/Dropbox/transfer/ca_26_test2 /gripper_t42/vel_ref_monitor /gripper_t42/pos_ref_monitor /marker_tracker/image_space_pose_msg /gripper/load /gripper/pos /gripper/curr /keyboard_input"
        if="$(arg recordData)" />
 
   <node pkg="dexterous_manipulation" type="plot_obj_pos.py" name="Plot" output="screen"></node>

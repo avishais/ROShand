@@ -11,4 +11,4 @@ record_data: {
 
 play_bags: {
   bag_directory: "/home/pracsys/Dropbox/transfer",
-  bag_files: ["ca_26_test1","ca_36_test1","ca_36_test2"]}
+  bag_files: ["ca_26_test2","ca_30_test4","ca_36_test3"]}
