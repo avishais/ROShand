@@ -1,6 +1,6 @@
 gripper: {
-  finger_initial_offset: [0.105,0.00],
+  finger_initial_offset: [0.151,0.00],
   finger_opening_position: [0.00,0.00],
-  finger_closing_position: [0.343,0.343],
+  finger_closing_position: [0.308,0.308],
   finger_move_offset: [0.020,0.020]
 }
