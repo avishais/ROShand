@@ -37,12 +37,14 @@ bool playAct::callbackRerun(std_srvs::Empty::Request&, std_srvs::Empty::Response
 
 void playAct::get_action_path(std::string file) {
 
+	ROS_INFO("[play_actions] Loading path data...");
+
 	std::ifstream myfile;
     myfile.open("/home/pracsys/catkin_ws/src/rutgers_collab/src/play_actions_node/paths/" + file);
 
 	if (!myfile)
     {
-        ROS_ERROR("[action_node] Failed to open action_path file.");
+        ROS_ERROR("[play_actions] Failed to open action_path file.");
     }
 
 	std::vector<double> a(2);
@@ -53,7 +55,7 @@ void playAct::get_action_path(std::string file) {
 	}
     myfile.close();
 
-	ROS_INFO("[action_node] Action_path file loaded, ready to execute");
+	ROS_INFO("[play_actions] Action_path file loaded, ready to execute");
 
 	loaded_path_ = true;
 

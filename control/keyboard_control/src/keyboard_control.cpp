@@ -88,12 +88,14 @@ void KeyboardControl::publishOutput(std::vector<double> output_vector){
 		return; 
 	common_msgs_gl::SendDoubleArray srv_out;
 	srv_out.request.data = output_vector;
-	if(!srvclnt_send_output_.call(srv_out)){
-		throw std::runtime_error("[KeyboardControl] Cannot send the keyboard control reference.");
-	}
+	if (enable_)
+		if(!srvclnt_send_output_.call(srv_out)){
+			throw std::runtime_error("[KeyboardControl] Cannot send the keyboard control reference.");
+		}
 	std_msgs::Float64MultiArray msg;
 	msg.data = output_vector;
-	pub_vel_ref_monitor_.publish(msg);
+	if (enable_)
+		pub_vel_ref_monitor_.publish(msg);
 }
 void KeyboardControl::publishNumber(int in){
 	std_msgs::Int32 msg;

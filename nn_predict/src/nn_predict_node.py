@@ -2,14 +2,13 @@
 import rospy
 from std_msgs.msg import Float64MultiArray, Float32MultiArray
 from marker_tracker.msg import ImageSpacePoseMsg
-from gp_predict.srv import StateAction, getNN, ActionChoice, StateAction2State
+from nn_predict.srv import StateAction, getNN, ActionChoice, StateAction2State
 import math
 import numpy as np
 
-from predict_GPy import predict
-# from predict_pyGPs import predict
+from predict_nn import predict_nn
 
-class Spin_predict(predict):
+class Spin_predict(predict_nn):
 
     gripper_pos = [0,0] 
     gripper_load = [0,0]
@@ -29,15 +28,15 @@ class Spin_predict(predict):
     mode_ = 8
 
     def __init__(self):
-        predict.__init__(self, self.mode_)
+        predict_nn.__init__(self)
 
         rospy.Subscriber('/gripper/pos', Float32MultiArray, self.callbackGripperPos)
         rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
-        s1 = rospy.Service('/gp_predict/predict', StateAction, self.callbackPredictService)
-        s2 = rospy.Service('/gp_predict/NumNN', getNN, self.callbackNumNNService)
-        s3 = rospy.Service('/gp_predict/ChooseAction', ActionChoice, self.callbackChooseAction)
-        s4 = rospy.Service('/gp_predict/predictWithState', StateAction2State, self.callbackPredictServiceWithState)
+        s1 = rospy.Service('/nn_predict/predict', StateAction, self.callbackPredictService)
+        s2 = rospy.Service('/nn_predict/NumNN', getNN, self.callbackNumNNService)
+        s3 = rospy.Service('/nn_predict/ChooseAction', ActionChoice, self.callbackChooseAction)
+        s4 = rospy.Service('/nn_predict/predictWithState', StateAction2State, self.callbackPredictServiceWithState)
 
         rospy.init_node('predict', anonymous=True)
         rate = rospy.Rate(15) # 15hz
@@ -97,9 +96,7 @@ class Spin_predict(predict):
             sa = np.concatenate((s, a), axis=0)
 
             sa = sa.reshape((1,self.state_action_dim))
-            sa = self.normalize(sa, 1)
-            s_next = self.propagate(sa).reshape(1, self.state_dim)
-            s_next = self.denormalize(s_next)
+            s_next = self.predict(sa).reshape(1, self.state_dim)
 
             # Take only image coordinates
             s_next = s_next[0,:2]
@@ -154,11 +151,7 @@ class Spin_predict(predict):
 
         sa = sa.reshape((1,self.state_action_dim))
 
-        sa = self.normalize(sa, 1)
-
-        s_next = self.propagate(sa).reshape(1, self.state_dim)
-
-        s_next = self.denormalize(s_next)
+        s_next = self.predict(sa).reshape(1, self.state_dim)
 
         # Take only image coordinates
         s_next = s_next[0,:2]
@@ -183,11 +176,7 @@ class Spin_predict(predict):
 
         sa = sa.reshape((1,self.state_action_dim))
 
-        sa = self.normalize(sa, 1)
-
-        s_next = self.propagate(sa).reshape(1, self.state_dim)
-
-        s_next = self.denormalize(s_next)
+        s_next = self.predict(sa).reshape(1, self.state_dim)
 
         print('Predicted next state: ' + str(s_next))
      
@@ -211,7 +200,7 @@ class Spin_predict(predict):
 
         k = self.countNN(sa)
 
-        rospy.loginfo('[gp_predict] Found ' + str(k) + ' nearest-neighbors for action ' + str(a) + ' and current configuration.')
+        rospy.loginfo('[nn_predict] Found ' + str(k) + ' nearest-neighbors for action ' + str(a) + ' and current configuration.')
        
         return {'num': k}
    

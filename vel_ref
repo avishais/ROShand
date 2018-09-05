@@ -1,3 +1,6 @@
 in_hand_manipulation_manager:
-Advertises a service to accept cartesian velocity - a six dim vector (x,y,.,.,.,.). The vector is recieved from keyboard_control via /visual_servoing/vel_ref_monitor topic. After in_hand_manipulation_manager converts it to actuator velocity (using the simple Jacobian in function convertCartesianVeltoActuatorVel), it calls it to service /gripper_t42/vel_ref. It is possible (need to verify) that gripper_node offers that service and adds the velocity to the angle. However, it seems it does not add it to the current angles but to the reference angles (kind of like odometrey?).  
+Advertises a service to accept cartesian velocity - a six dim vector (x,y,.,.,.,.). The vector is recieved from keyboard_control via /visual_servoing/vel_ref_monitor topic. After in_hand_manipulation_manager converts it to actuator velocity (using the simple Jacobian in function convertCartesianVeltoActuatorVel), it calls it to service /gripper_t42/vel_ref. It is possible (need to verify) that gripper_node offers that service and adds the velocity to the angle. However, it seems it does not add it to the current angles but to the reference angles (kind of like odometrey?). 
+
+
+114.87999999999999545253,-409.80000000000001136868,0.45582000000000000295,0.36913000000000001366,45.00000000000000000000,-43.00000000000000000000 
 

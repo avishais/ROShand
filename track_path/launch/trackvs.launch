@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="recordData" default="true" />
+  <arg name="recordData" default="false" />
 
   <rosparam command="load" file="$(find dexterous_manipulation)/param/keyboard.yaml" />
   <rosparam command="load" file="$(find dexterous_manipulation)/param/gripper.yaml" />
@@ -15,13 +15,12 @@
   </node>
 
  <node pkg="rosbag" type="record" name="rosbag_record_data"
-       args="record -O /home/pracsys/Dropbox/transfer/cc_20_test1 /gripper_t42/vel_ref_monitor /gripper_t42/pos_ref_monitor /marker_tracker/image_space_pose_msg /gripper/load /gripper/pos /gripper/curr /keyboard_input"
+       args="record -O /home/pracsys/Dropbox/transfer/test_rrt_long /gripper_t42/vel_ref_monitor /gripper_t42/pos_ref_monitor /marker_tracker/image_space_pose_msg /gripper/load /gripper/pos /gripper/curr /keyboard_input"
        if="$(arg recordData)" />
 
   <node pkg="dexterous_manipulation" type="plot_obj_pos.py" name="Plot" output="screen"></node>
   <node name="marker_tracker" pkg="marker_tracker" type="marker_tracker"/>
   <node name="dexterous_manipulation" pkg="dexterous_manipulation" type="keyboard" output="screen"/>
-  <node name="keyboard_input" pkg="keyboard_input" type="keyboard_input" output="screen"/>
-  <node name="keyboard_control" pkg="keyboard_control" type="keyboard_control" output="screen"/>
   <node name="gripper_state_publisher" pkg="gripper_state_publisher" type="gripper_state_publisher_node"/>
+  <!-- <node pkg="track_path" type="track_vs_node.py" name="track_path" output="screen"></node> -->
 </launch>

@@ -6,6 +6,7 @@
 #include "std_msgs/Float32MultiArray.h"
 #include "std_msgs/Float64MultiArray.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
 #include "marker_tracker/ImageSpacePoseMsg.h"
 #include "common_msgs_gl/SendInt.h"
 #include "common_msgs_gl/GetDoubleArray.h"
@@ -24,12 +25,13 @@ class RecordData{
 	std::string path_out_, file_to_write_;
 	std::string destination_ = "./";
 	std::string filename_ = "training_data/training_data";
+	int key_ = 0;
 	std::vector<int> posx_;
 	std::vector<int> posy_;
 	std::vector<double> angles_;
 	std::vector<float> gripper_pos_, gripper_load_;
 	std::vector<double> gripper_vel_ref_, gripper_pos_ref_;
-	std::vector<int> requested_data_ids_ = {1,2,3,4,5,6,7,8,9,10,11};
+	std::vector<int> requested_data_ids_ = {1,2,3,4,5,6,7,8,9,10};
 	std::ofstream file_out_;
 	int it_gp_ = data_window_size_-1,it_ca_ = data_window_size_-1, it_gl_ = data_window_size_-1, it_cur_ = data_window_size_-1, it_normal_ = data_window_size_-1, it_vr_ = data_window_size_-1, it_pr_ = data_window_size_-1, it_cvr_ = data_window_size_-1, it_marker_ = data_window_size_-1;
 	std::chrono::high_resolution_clock::time_point startTime_;
@@ -37,7 +39,7 @@ class RecordData{
 	ros::NodeHandle node_handle_;
 	image_transport::ImageTransport * image_transport_;
 	image_transport::Subscriber sub_image_;
-	ros::Subscriber sub_image_space_pose_, sub_gripper_pos_, sub_gripper_load_, sub_gripper_vel_ref_, sub_gripper_pos_ref_, sub_cartesian_vel_ref_, sub_curvatures_, sub_normals_, sub_contact_angles_, sub_out_filename_, image_sub_;
+	ros::Subscriber sub_image_space_pose_, sub_gripper_pos_, sub_gripper_load_, sub_gripper_vel_ref_, sub_gripper_pos_ref_, sub_cartesian_vel_ref_, sub_curvatures_, sub_normals_, sub_contact_angles_, sub_out_filename_, image_sub_, sub_keyboard_input_;
 	ros::ServiceServer srvsrvr_record_trigger_, srvsrvr_send_last_data_, srvsrvr_filename_;
 	void increaseIt(int& it);
 	int nextIt(int it);
@@ -53,6 +55,7 @@ class RecordData{
 	bool callbackSendLastData(common_msgs_gl::GetDoubleArray::Request& req, common_msgs_gl::GetDoubleArray::Response& res);
 	bool callbackFilename(common_msgs_gl::SendString::Request& req, common_msgs_gl::SendString::Response& res);
 	void callbackOutFilename(std_msgs::String msg);
+	void callbackKeyboardInput(const std_msgs::Int32 msg);
 	void waitForMessages();
 public:
 	RecordData();

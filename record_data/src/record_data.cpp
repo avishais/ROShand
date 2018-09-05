@@ -73,6 +73,7 @@ RecordData::RecordData(){
 	sub_gripper_vel_ref_ = node_handle_.subscribe("/gripper_t42/vel_ref_monitor",1,&RecordData::callbackGripperVelRef, this);
 	sub_gripper_pos_ref_ = node_handle_.subscribe("/gripper_t42/pos_ref_monitor",1,&RecordData::callbackGripperPosRef, this);
 	sub_image_space_pose_ = node_handle_.subscribe("/marker_tracker/image_space_pose_msg",1,&RecordData::callbackMarkerImageSpacePose,this);
+	sub_keyboard_input_ = node_handle_.subscribe("/keyboard_input",1,&RecordData::callbackKeyboardInput,this);
 	
 	// srvsrvr_record_trigger_ = node_handle_.advertiseService("/record_data/record_trigger",&RecordData::callbackRecordTrigger,this);
 	// srvsrvr_send_last_data_ = node_handle_.advertiseService("/record_data/send_feature_vector",&RecordData::callbackSendLastData,this);
@@ -184,6 +185,11 @@ std::vector<double> RecordData::constructFeatureVector(){
 			out.push_back(posy_[ref_marker_id_]);
 			out.push_back(angles_[ref_marker_id_]);
 		}
+		else if (element == 10){ // Keyboard input
+			if (key_ == 0)
+				std::runtime_error("[record_data] keyboard input not recieved not received.");
+			out.push_back(key_);
+		}
 	// 	else if (element == 10){	//object vel
 	// 		if (posx_.size() != marker_no_ || posy_.size() != marker_no_)
 	// 			std::runtime_error("[record_data] posx or posy is not received.");
@@ -238,23 +244,23 @@ void RecordData::callbackGripperVelRef(std_msgs::Float64MultiArray msg){
 	std::vector<double> out;
 	out = msg.data;
 
-	double norm = std::pow(std::pow(out[0],2.0) + std::pow(out[1],2.0),0.5);
-	if(norm == 0){
-		out[0] = 0;
-		out[1] = 0;
-	}
-	else{
-		out[0] = out[0]/norm;
-		out[1] = out[1]/norm;
-	}
-	for (size_t i = 0; i < out.size(); i++){ // ???
-		if (out[i]>0.3826)
-			out[i] = 0.06;
-		else if (out[i] < -0.3826)
-			out[i] = -0.06;
-		else
-			out[i] = 0;
-	}
+	// double norm = std::pow(std::pow(out[0],2.0) + std::pow(out[1],2.0),0.5);
+	// if(norm == 0){
+	// 	out[0] = 0;
+	// 	out[1] = 0;
+	// }
+	// else{
+	// 	out[0] = out[0]/norm;
+	// 	out[1] = out[1]/norm;
+	// }
+	// for (size_t i = 0; i < out.size(); i++){ // ???
+	// 	if (out[i]>0.3826)
+	// 		out[i] = 0.06;
+	// 	else if (out[i] < -0.3826)
+	// 		out[i] = -0.06;
+	// 	else
+	// 		out[i] = 0;
+	// }
 
 	gripper_vel_ref_ = out;
 }
@@ -278,6 +284,10 @@ void RecordData::callbackMarkerImageSpacePose(marker_tracker::ImageSpacePoseMsg 
 void RecordData::imageCallback(const sensor_msgs::ImageConstPtr& msg){
 	image_received_ = cv_bridge::toCvShare(msg,"bgr8")->image;
 	first_image_received_ = true;
+}
+
+void RecordData::callbackKeyboardInput(const std_msgs::Int32 msg){
+	key_ = msg.data;
 }
 
 

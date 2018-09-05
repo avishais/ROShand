@@ -4,11 +4,11 @@ record_data: {
   requested_data_ids: [1,2,3,4,5,7,8,9], # description in record_data.cpp
   data_window_size: 10,
   marker_no: 6,
-  save_images: true,
+  save_images: false,
   ref_marker_id: 0,
   obj_marker_id: 5
 }
 
 play_bags: {
   bag_directory: "/home/pracsys/Dropbox/transfer",
-  bag_files: ["ca_26_test2","ca_30_test4","ca_36_test3"]}
+  bag_files: ["cc_20_01","cc_20_03","cc_20_04","cc_20_05","cc_20_06","cc_20_07","cc_20_08","cc_20_09","cc_20_10","cc_20_11","cc_20_12","cc_20_13","cc_20_14","cc_20_15","cc_20_16","cc_20_17","cc_20_18","cc_20_19","cc_20_20","cc_20_21","cc_20_22","cc_20_23","cc_20_24","cc_20_25","cc_20_26","cc_20_27","cc_20_28","cc_20_29","cc_20_30","cc_20_31","cc_20_32","cc_20_33","cc_20_34","cc_20_35","cc_20_36","cc_20_37","cc_20_38","cc_20_39","cc_20_40","cc_20_41","cc_20_42","cc_20_43","cc_20_44","cc_20_45","cc_20_46","cc_20_47","cc_20_48","cc_20_49","cc_20_50","cc_20_test1"]}
