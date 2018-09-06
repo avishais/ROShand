@@ -21,7 +21,7 @@ class predict_nn:
        
     def __init__(self):
 
-        model_file = "../models/cp_8.ckpt"
+        model_file = "/home/pracsys/Documents/workspace/adaptive_hand_model/nn/models/cc_8.ckpt"
 
         # Network Parameters
         self.num_input = self.state_action_dim

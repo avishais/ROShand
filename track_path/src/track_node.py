@@ -20,25 +20,54 @@ class track():
     base_theta = 0
     path = np.array([0,0])
     ready = False
-    A = np.array([[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06]])#, [0.06, 0.06]])
     freq = 15
-
+    #                  Q            W          E         A          D         Z        X       C
+    A = np.array([[0.0, -0.4], [-0.2,-0.2], [-0.4,0],[0.2,-0.2],[-0.2,0.2],[0.4,0],[0.2,0.2],[0,0.4]])
+    KEY_Q = 113
     KEY_W = 119
-    KEY_X = 120
+    KEY_E = 101
+    KEY_A = 97
     KEY_S = 115
     KEY_D = 100
-    KEY_A = 97
+    KEY_Z = 122
+    KEY_X = 120
+    KEY_C = 99
 
     def callbackTrackEnable(self, req):
         self.enable = req.data
 
 
     def tracked_path(self, obj_pos):
-        self.path = np.empty([3,2])
+        # Line
+        # self.path = np.empty([5,2])
+        # for i in range(1,self.path.shape[0]+1):
+        #     self.path[i-1,:] = np.array([obj_pos[0]+i*12, obj_pos[1]+i*5]).reshape(1,2)
+        # # for i in range(2,7):
+        # #     self.path = np.append(self.path, np.array([self.path[-1,0]+10, self.path[-1,1]]).reshape(1,2), axis=0) 
+
+        # square
+        self.path = np.empty([4,2])
+        st = 4
         for i in range(1,self.path.shape[0]+1):
-            self.path[i-1,:] = np.array([obj_pos[0]-i*12, obj_pos[1]+i*10]).reshape(1,2)
-        for i in range(2,7):
-            self.path = np.append(self.path, np.array([self.path[-1,0]+10, self.path[-1,1]]).reshape(1,2), axis=0) 
+            self.path[i-1,:] = np.array([obj_pos[0]-i*st, obj_pos[1]]).reshape(1,2)
+        for i in range(1,8):
+            self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st]).reshape(1,2), axis=0) 
+        for i in range(1,8):
+            self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+        for i in range(1,8):
+            self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0)  
+        for i in range(1,4):
+            self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
+
+        # Circle
+        # r = 14.0
+        # c = np.array([obj_pos[0], obj_pos[1]+r])
+        # Th = np.linspace(-np.pi/2, 1.5*np.pi, num=10)
+        # i = 0
+        # self.path = np.empty((0,2))
+        # for th in Th:
+        #     self.path = np.append(self.path, np.array([c[0]+r*np.cos(th), c[1]+r*np.sin(th)]).reshape(1,2), axis=0) 
+        # self.path = np.delete(self.path, 0, 0)
 
         plt.plot(self.path[:,0], self.path[:,1],'.b')
         plt.draw()
@@ -55,8 +84,8 @@ class track():
             if self.counter % 2 == 0:
                 plt.plot(self.obj_pos[0], self.obj_pos[1],'.r')
                 plt.axis("equal")
-                plt.axis([200, 750, 90, 350])
-                # plt.axis([480, 560, 50, 150])
+                # plt.axis([200, 750, -350, -40])
+                plt.axis([200, 750, 40, 350])
                 plt.title("Obj. position: " + str(self.obj_pos))
                 plt.draw()
                 plt.pause(0.00000000001)
@@ -91,7 +120,7 @@ class track():
 
         rospy.init_node('track', anonymous=True)
         rate = rospy.Rate(self.freq) # 15hz
-        last_checkpoint = self.obj_pos
+        last_checkpoint = np.copy(self.obj_pos)
         while not rospy.is_shutdown():
             pub_carrot.publish(data=carrot_point)
 
@@ -102,17 +131,20 @@ class track():
                 print(iter)
 
                 print('obj. pos: ' + str(self.obj_pos) + ', waypoint: ' + str(carrot_point) + ', dist.: (' + str(np.linalg.norm(self.obj_pos-last_checkpoint)) + ', ' + str(np.linalg.norm(self.obj_pos-self.path[iter+1,:]))) + ')'
+                print('Last checkpoint: ' + str(last_checkpoint))
                 if np.linalg.norm(self.obj_pos-carrot_point) < 1 or np.linalg.norm(self.obj_pos-last_checkpoint) > np.linalg.norm(self.obj_pos-self.path[iter+1,:]):
                     iter += 1
+                    last_checkpoint = np.copy(carrot_point)
                     print('Moved to next waypoint: ' + str(self.path[iter,:]))
 
                 carrot_point = self.path[iter,:]
                 a = self.choose_action_client(carrot_point)
                 print('Publishing action: ' + str(a))
                 pub.publish(a)
-                rospy.sleep(0*1/self.freq+1)
+                rospy.sleep(0*1/self.freq+0.2)
                 pub.publish(self.KEY_S)
-                if iter+1==self.path.shape[0] or np.linalg.norm(self.obj_pos-self.path[-1]) < 1:
+                rospy.sleep(0.4)
+                if iter+1==self.path.shape[0] and np.linalg.norm(self.obj_pos-self.path[-1]) < 1: #iter+1==self.path.shape[0] or 
                     print('Reached goal!!!')
                     self.enable = False
 

@@ -16,14 +16,20 @@ class Spin_predict(predict_nn):
     base_theta = 0
     obj_pos = [0,0]
     R = []
-    A = np.array([[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06], [0.06, 0.06]])
     count = 1
 
+    #                  Q            W          E         A          D         Z        X       C
+    A = np.array([[0.0, -0.4], [-0.2,-0.2], [-0.4,0],[0.2,-0.2],[-0.2,0.2],[0.4,0],[0.2,0.2],[0,0.4]])
+    KEY_Q = 113
     KEY_W = 119
-    KEY_X = 120
+    KEY_E = 101
+    KEY_A = 97
     KEY_S = 115
     KEY_D = 100
-    KEY_A = 97
+    KEY_Z = 122
+    KEY_X = 120
+    KEY_C = 99
+    Keys = np.array([KEY_Q, KEY_W, KEY_E, KEY_A, KEY_D, KEY_Z, KEY_X, KEY_C])
 
     mode_ = 8
 
@@ -33,10 +39,10 @@ class Spin_predict(predict_nn):
         rospy.Subscriber('/gripper/pos', Float32MultiArray, self.callbackGripperPos)
         rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
-        s1 = rospy.Service('/nn_predict/predict', StateAction, self.callbackPredictService)
-        s2 = rospy.Service('/nn_predict/NumNN', getNN, self.callbackNumNNService)
-        s3 = rospy.Service('/nn_predict/ChooseAction', ActionChoice, self.callbackChooseAction)
-        s4 = rospy.Service('/nn_predict/predictWithState', StateAction2State, self.callbackPredictServiceWithState)
+        s1 = rospy.Service('predict', StateAction, self.callbackPredictService)
+        s2 = rospy.Service('NumNN', getNN, self.callbackNumNNService)
+        s3 = rospy.Service('ChooseAction', ActionChoice, self.callbackChooseAction)
+        s4 = rospy.Service('predictWithState', StateAction2State, self.callbackPredictServiceWithState)
 
         rospy.init_node('predict', anonymous=True)
         rate = rospy.Rate(15) # 15hz
@@ -111,27 +117,10 @@ class Spin_predict(predict_nn):
                 d_max = d
                 a_max = self.A[i,:]
                 s_next_s = s_next
+                Key_index = i
 
         a = a_max
-        if a[0] < 0 and a[1] < 0: # Down
-            K = self.KEY_W
-            # return {'key': self.KEY_W}
-
-        if a[0] > 0 and a[1] > 0: # Up
-            K = self.KEY_X
-            # return {'key': self.KEY_X}
-        
-        if a[0] < 0 and a[1] > 0: # Left
-            K = self.KEY_D
-            # return {'key': self.KEY_A}
-
-        if a[0] > 0 and a[1] < 0: # right
-            K = self.KEY_A
-            # return {'key': self.KEY_D}
-
-        if a[0] == 0 and a[1] == 0:
-            K = self.KEY_S
-            # return {'key': self.KEY_S}
+        K = self.Keys[Key_index]
 
         print("*** predicted next state: " + str(s_next_s) + " with action: " + str(a) + "(" + str(K) + ")" + " planned to have distance " + str(np.linalg.norm(s_next_s-cur_set_point)))
         return {'key': K}
