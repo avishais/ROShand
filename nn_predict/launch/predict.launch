@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="nn_predict" type="nn_predict_node.py" name="nn_predict" output="screen">
+    </node>
+</launch>

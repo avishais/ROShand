@@ -55,7 +55,7 @@ class RecordData{
 	bool callbackSendLastData(common_msgs_gl::GetDoubleArray::Request& req, common_msgs_gl::GetDoubleArray::Response& res);
 	bool callbackFilename(common_msgs_gl::SendString::Request& req, common_msgs_gl::SendString::Response& res);
 	void callbackOutFilename(std_msgs::String msg);
-	void callbackKeyboardInput(const std_msgs::Int32 msg);
+	// void callbackKeyboardInput(const std_msgs::Int32 msg);
 	void waitForMessages();
 public:
 	RecordData();

@@ -34,10 +34,10 @@ class Spin_predict(predict):
         rospy.Subscriber('/gripper/pos', Float32MultiArray, self.callbackGripperPos)
         rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
-        s1 = rospy.Service('/gp_predict/predict', StateAction, self.callbackPredictService)
-        s2 = rospy.Service('/gp_predict/NumNN', getNN, self.callbackNumNNService)
-        s3 = rospy.Service('/gp_predict/ChooseAction', ActionChoice, self.callbackChooseAction)
-        s4 = rospy.Service('/gp_predict/predictWithState', StateAction2State, self.callbackPredictServiceWithState)
+        s1 = rospy.Service('predict', StateAction, self.callbackPredictService)
+        s2 = rospy.Service('NumNN', getNN, self.callbackNumNNService)
+        s3 = rospy.Service('ChooseAction', ActionChoice, self.callbackChooseAction)
+        s4 = rospy.Service('predictWithState', StateAction2State, self.callbackPredictServiceWithState)
 
         rospy.init_node('predict', anonymous=True)
         rate = rospy.Rate(15) # 15hz

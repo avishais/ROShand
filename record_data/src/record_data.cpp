@@ -73,7 +73,7 @@ RecordData::RecordData(){
 	sub_gripper_vel_ref_ = node_handle_.subscribe("/gripper_t42/vel_ref_monitor",1,&RecordData::callbackGripperVelRef, this);
 	sub_gripper_pos_ref_ = node_handle_.subscribe("/gripper_t42/pos_ref_monitor",1,&RecordData::callbackGripperPosRef, this);
 	sub_image_space_pose_ = node_handle_.subscribe("/marker_tracker/image_space_pose_msg",1,&RecordData::callbackMarkerImageSpacePose,this);
-	sub_keyboard_input_ = node_handle_.subscribe("/keyboard_input",1,&RecordData::callbackKeyboardInput,this);
+	// sub_keyboard_input_ = node_handle_.subscribe("/keyboard_input",1,&RecordData::callbackKeyboardInput,this);
 	
 	// srvsrvr_record_trigger_ = node_handle_.advertiseService("/record_data/record_trigger",&RecordData::callbackRecordTrigger,this);
 	// srvsrvr_send_last_data_ = node_handle_.advertiseService("/record_data/send_feature_vector",&RecordData::callbackSendLastData,this);
@@ -286,9 +286,9 @@ void RecordData::imageCallback(const sensor_msgs::ImageConstPtr& msg){
 	first_image_received_ = true;
 }
 
-void RecordData::callbackKeyboardInput(const std_msgs::Int32 msg){
-	key_ = msg.data;
-}
+// void RecordData::callbackKeyboardInput(const std_msgs::Int32 msg){
+// 	key_ = msg.data;
+// }
 
 
 /*
