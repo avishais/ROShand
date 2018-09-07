@@ -23,7 +23,10 @@ int main(int argc, char** argv){
 		srv_filename.request.data = file;
 		srvclnt_filename.call(srv_filename);
 		ros::spinOnce();
-		ros::Duration(15).sleep();
+		if (bag_files.size()==1)
+			ros::Duration(2).sleep();
+		else
+			ros::Duration(15).sleep();
 		std::string system_command = "rosbag play " + bag_directory + "/" + file + ".bag"; 
 		ROS_INFO("[play_bags] Playing the file %s", file.c_str());
 		system(system_command.c_str());

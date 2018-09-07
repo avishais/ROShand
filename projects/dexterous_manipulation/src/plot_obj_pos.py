@@ -44,7 +44,7 @@ class Plot():
                 # plt.plot(self.ref_data[:,0], self.ref_data[:,1],'xg')
                 plt.xlabel('x')
                 plt.ylabel('y')
-                plt.title('Real-time object position')
+                plt.title('Real-time object position:' + str(self.obj_pos))
                 plt.draw()
                 plt.pause(0.00000000001)
             self.counter += 1

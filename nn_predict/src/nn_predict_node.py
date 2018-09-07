@@ -33,6 +33,8 @@ class Spin_predict(predict_nn):
 
     mode_ = 8
 
+    NN_threshold = 3000
+
     def __init__(self):
         predict_nn.__init__(self)
 
@@ -76,6 +78,7 @@ class Spin_predict(predict_nn):
             self.obj_pos = np.matmul(self.R, self.obj_pos.T)
         except:
             pass
+        # print(self.obj_pos)
 
     def callbackChooseAction(self, req):
         cur_set_point = req.set_point
@@ -100,12 +103,20 @@ class Spin_predict(predict_nn):
         for i in range(self.A.shape[0]):
             a = self.A[i,:]
             sa = np.concatenate((s, a), axis=0)
-
             sa = sa.reshape((1,self.state_action_dim))
+
+            # Check sparsity/failure
+            sa_n = self.normalize(np.copy(sa))
+            k = self.countNN(sa_n)
+            rospy.loginfo('[nn_predict] Number of nearest neighbors for query state-action: ' + str(k))
+            if k < self.NN_threshold:
+                continue
+
             s_next = self.predict(sa).reshape(1, self.state_dim)
 
             # Take only image coordinates
             s_next = s_next[0,:2]
+            print(self.obj_pos, s_next)
 
             # Reproject to image plane
             s_next = np.matmul(self.R.T, s_next.T)
@@ -154,6 +165,7 @@ class Spin_predict(predict_nn):
         return {'next_state': s_next}
 
     # Predicts the next step by calling the GP class - gets external state (for planner)
+    # rosservice call /predictWithState '{state: [67.7478, -409.5858 ,   0.4772,    0.3560,   61.0000,         0], action: [0.200,   -0.200]}'
     def callbackPredictServiceWithState(self, req):
         s = np.array(req.state)
         a = np.array(req.action)
@@ -185,8 +197,9 @@ class Spin_predict(predict_nn):
             sa = np.concatenate((self.obj_pos, self.gripper_pos, self.gripper_load, a), axis=0)
 
         sa = sa.reshape((1,self.state_action_dim))
-        sa = self.normalize(sa, 1)
+        sa = self.normalize(sa)
 
+        rospy.loginfo('[nn_predict] Findind number of nn for ' + str(sa))
         k = self.countNN(sa)
 
         rospy.loginfo('[nn_predict] Found ' + str(k) + ' nearest-neighbors for action ' + str(a) + ' and current configuration.')

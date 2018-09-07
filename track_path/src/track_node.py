@@ -46,19 +46,66 @@ class track():
         # #     self.path = np.append(self.path, np.array([self.path[-1,0]+10, self.path[-1,1]]).reshape(1,2), axis=0) 
 
         # square
-        self.path = np.empty([4,2])
-        st = 4
-        for i in range(1,self.path.shape[0]+1):
-            self.path[i-1,:] = np.array([obj_pos[0]-i*st, obj_pos[1]]).reshape(1,2)
-        for i in range(1,8):
-            self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st]).reshape(1,2), axis=0) 
-        for i in range(1,8):
-            self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
-        for i in range(1,8):
-            self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0)  
-        for i in range(1,4):
-            self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
+        # self.path = np.empty([2,2])
+        # st = 8
+        # for i in range(1,self.path.shape[0]+1):
+        #     self.path[i-1,:] = np.array([obj_pos[0]-i*st, obj_pos[1]]).reshape(1,2)
+        # for i in range(1,4):
+        #     self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st]).reshape(1,2), axis=0) 
+        # for i in range(1,4):
+        #     self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+        # for i in range(1,4):
+        #     self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0)  
+        # for i in range(1,4):
+        #     self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
 
+        # Rectangle
+        m = 4
+        if m==1:
+            self.path = np.empty([8,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0]-i*st, obj_pos[1]]).reshape(1,2)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st-3]).reshape(1,2), axis=0) 
+            for i in range(1,9):
+                self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-(st-3)]).reshape(1,2), axis=0)  
+        if m==2:
+            self.path = np.empty([2,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0], obj_pos[1]-i*st]).reshape(1,2)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st]).reshape(1,2), axis=0)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
+        if m==3:
+            self.path = np.empty([8,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0]+i*st, obj_pos[1]]).reshape(1,2)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st-3]).reshape(1,2), axis=0) 
+            for i in range(1,9):
+                self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-(st-3)]).reshape(1,2), axis=0)  
+        if m==4:
+            self.path = np.empty([2,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0], obj_pos[1]+i*st]).reshape(1,2)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
+         
         # Circle
         # r = 14.0
         # c = np.array([obj_pos[0], obj_pos[1]+r])
@@ -69,7 +116,7 @@ class track():
         #     self.path = np.append(self.path, np.array([c[0]+r*np.cos(th), c[1]+r*np.sin(th)]).reshape(1,2), axis=0) 
         # self.path = np.delete(self.path, 0, 0)
 
-        plt.plot(self.path[:,0], self.path[:,1],'.b')
+        plt.plot(self.path[:,0], -self.path[:,1],'.b')
         plt.draw()
         self.ready = True
 
@@ -81,11 +128,11 @@ class track():
             self.obj_pos = np.array([msg.posx[msg.ids.index(5)], msg.posy[msg.ids.index(5)]])
             self.base_pos = np.array([msg.posx[msg.ids.index(0)], msg.posy[msg.ids.index(0)]])
             self.base_theta = math.pi - msg.angles[msg.ids.index(0)]
-            if self.counter % 2 == 0:
-                plt.plot(self.obj_pos[0], self.obj_pos[1],'.r')
+            if self.counter % 7 == 0:
+                plt.plot(self.obj_pos[0], -self.obj_pos[1],'.r')
                 plt.axis("equal")
                 # plt.axis([200, 750, -350, -40])
-                plt.axis([200, 750, 40, 350])
+                # plt.axis([200, 750, 40, 350])
                 plt.title("Obj. position: " + str(self.obj_pos))
                 plt.draw()
                 plt.pause(0.00000000001)
@@ -135,15 +182,15 @@ class track():
                 if np.linalg.norm(self.obj_pos-carrot_point) < 1 or np.linalg.norm(self.obj_pos-last_checkpoint) > np.linalg.norm(self.obj_pos-self.path[iter+1,:]):
                     iter += 1
                     last_checkpoint = np.copy(carrot_point)
-                    print('Moved to next waypoint: ' + str(self.path[iter,:]))
+                    print('******** Moved to next waypoint: ' + str(self.path[iter,:]))
 
                 carrot_point = self.path[iter,:]
                 a = self.choose_action_client(carrot_point)
                 print('Publishing action: ' + str(a))
                 pub.publish(a)
-                rospy.sleep(0*1/self.freq+0.2)
+                rospy.sleep(0*1/self.freq+0.1)
                 pub.publish(self.KEY_S)
-                rospy.sleep(0.4)
+                rospy.sleep(0.35)
                 if iter+1==self.path.shape[0] and np.linalg.norm(self.obj_pos-self.path[-1]) < 1: #iter+1==self.path.shape[0] or 
                     print('Reached goal!!!')
                     self.enable = False
