@@ -11,16 +11,42 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from scipy.io import loadmat
 import time
-
+from sklearn.neighbors import KDTree #pip install -U scikit-learn
 
 class predict_nn:
 
-
+    mode = 8
     state_action_dim = 8
     state_dim = 6
+
+    Xtrain = np.array([])
+    Xtrain_nn = np.array([])
+    kdt = []
+    W = []
        
     def __init__(self):
 
+        ####### Load training data for failure check
+        print('[predict_nn] Loading training data...')
+        Q = loadmat('/home/pracsys/Documents/workspace/adaptive_hand_model/data/Cc_20_' + str(self.mode) + '.mat')
+        Qtrain = Q['Xtraining']
+        print('[predict_nn Gpy] Loaded training data of ' + str(Qtrain.shape[0]) + ' points in feature conf. ' + str(self.mode) + '.')
+
+        self.W = np.array([6, 6, 3, 3, 1, 1, 3, 3])
+        self.W = self.W.reshape((self.W.shape[0],))
+        self.Xtrain = Qtrain[:,0:self.state_action_dim]
+
+        self.x_max_X = np.max(self.Xtrain, axis=0)
+        self.x_min_X = np.min(self.Xtrain, axis=0)
+        self.Xtrain = self.normalize(self.Xtrain)
+
+        print("[predict_nn] Constructing kd-tree...")
+        self.Xtrain_nn = self.Xtrain# * self.W
+        self.kdt = KDTree(self.Xtrain_nn, leaf_size=10, metric='euclidean')
+        print("[predict_nn] kd-tree constructed. Ready to predict!")
+
+
+        ######## Load Neural Network
         model_file = "/home/pracsys/Documents/workspace/adaptive_hand_model/nn/models/cc_8.ckpt"
 
         # Network Parameters
@@ -49,6 +75,11 @@ class predict_nn:
         saver = tf.train.Saver()
         saver.restore(self.sess, model_file)
 
+    def normalize(self, data):
+        for i in range(data.shape[1]):
+            data[:,i] = (data[:,i]-self.x_min_X[i])/(self.x_max_X[i]-self.x_min_X[i])
+        return data
+
     def predict(self, sa):
         s = np.copy(sa[:,:self.num_output])#.reshape(self.num_input, 1)
         
@@ -58,6 +89,10 @@ class predict_nn:
         
         s_next = s + ds
         return s_next
+
+    def countNN(self, sa):
+        idx = self.kdt.query_radius(sa, r=np.sqrt(0.15))
+        return len(idx[0])
 
         
 # if __name__ == "__main__":

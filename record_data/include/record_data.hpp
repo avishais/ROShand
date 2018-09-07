@@ -5,6 +5,7 @@
 #include "cv_bridge/cv_bridge.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "std_msgs/Float64MultiArray.h"
+#include "std_msgs/Int32MultiArray.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
 #include "marker_tracker/ImageSpacePoseMsg.h"
@@ -26,6 +27,7 @@ class RecordData{
 	std::string destination_ = "./";
 	std::string filename_ = "training_data/training_data";
 	int key_ = 0;
+	std::vector<double> carrot_pos_;
 	std::vector<int> posx_;
 	std::vector<int> posy_;
 	std::vector<double> angles_;
@@ -39,7 +41,7 @@ class RecordData{
 	ros::NodeHandle node_handle_;
 	image_transport::ImageTransport * image_transport_;
 	image_transport::Subscriber sub_image_;
-	ros::Subscriber sub_image_space_pose_, sub_gripper_pos_, sub_gripper_load_, sub_gripper_vel_ref_, sub_gripper_pos_ref_, sub_cartesian_vel_ref_, sub_curvatures_, sub_normals_, sub_contact_angles_, sub_out_filename_, image_sub_, sub_keyboard_input_;
+	ros::Subscriber sub_image_space_pose_, sub_gripper_pos_, sub_gripper_load_, sub_gripper_vel_ref_, sub_gripper_pos_ref_, sub_cartesian_vel_ref_, sub_curvatures_, sub_normals_, sub_contact_angles_, sub_out_filename_, image_sub_, sub_keyboard_input_, sub_carrot_;
 	ros::ServiceServer srvsrvr_record_trigger_, srvsrvr_send_last_data_, srvsrvr_filename_;
 	void increaseIt(int& it);
 	int nextIt(int it);
@@ -51,6 +53,7 @@ class RecordData{
 	void callbackGripperLoad(std_msgs::Float32MultiArray msg);
 	void callbackGripperVelRef(std_msgs::Float64MultiArray msg);
 	void callbackGripperPosRef(std_msgs::Float64MultiArray msg);
+	void callbackCarrot(std_msgs::Float64MultiArray msg);
 	bool callbackRecordTrigger(common_msgs_gl::SendInt::Request& req, common_msgs_gl::SendInt::Response& res);
 	bool callbackSendLastData(common_msgs_gl::GetDoubleArray::Request& req, common_msgs_gl::GetDoubleArray::Response& res);
 	bool callbackFilename(common_msgs_gl::SendString::Request& req, common_msgs_gl::SendString::Response& res);

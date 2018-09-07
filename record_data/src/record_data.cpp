@@ -66,6 +66,7 @@ RecordData::RecordData(){
 	posx_.resize(marker_no_);
 	posy_.resize(marker_no_);
 	angles_.resize(marker_no_);
+	carrot_pos_.resize(2, 0);
 
 //	sub_out_filename_ = node_handle_.subscribe("/play_bags/filename",1,&RecordData::callbackOutFilename, this);
 	sub_gripper_pos_ = node_handle_.subscribe("/gripper/pos",1,&RecordData::callbackGripperPos, this);
@@ -74,6 +75,7 @@ RecordData::RecordData(){
 	sub_gripper_pos_ref_ = node_handle_.subscribe("/gripper_t42/pos_ref_monitor",1,&RecordData::callbackGripperPosRef, this);
 	sub_image_space_pose_ = node_handle_.subscribe("/marker_tracker/image_space_pose_msg",1,&RecordData::callbackMarkerImageSpacePose,this);
 	// sub_keyboard_input_ = node_handle_.subscribe("/keyboard_input",1,&RecordData::callbackKeyboardInput,this);
+	sub_carrot_ = node_handle_.subscribe("/carrot_point",1,&RecordData::callbackCarrot,this);
 	
 	// srvsrvr_record_trigger_ = node_handle_.advertiseService("/record_data/record_trigger",&RecordData::callbackRecordTrigger,this);
 	// srvsrvr_send_last_data_ = node_handle_.advertiseService("/record_data/send_feature_vector",&RecordData::callbackSendLastData,this);
@@ -190,6 +192,12 @@ std::vector<double> RecordData::constructFeatureVector(){
 				std::runtime_error("[record_data] keyboard input not recieved not received.");
 			out.push_back(key_);
 		}
+		else if (element == 11){ //Carrot point
+			if (key_ == 0)
+				std::runtime_error("[record_data] carrot point not recieved not received.");
+			out.push_back(carrot_pos_[0]);
+			out.push_back(carrot_pos_[1]);
+		}
 	// 	else if (element == 10){	//object vel
 	// 		if (posx_.size() != marker_no_ || posy_.size() != marker_no_)
 	// 			std::runtime_error("[record_data] posx or posy is not received.");
@@ -285,6 +293,13 @@ void RecordData::imageCallback(const sensor_msgs::ImageConstPtr& msg){
 	image_received_ = cv_bridge::toCvShare(msg,"bgr8")->image;
 	first_image_received_ = true;
 }
+
+void RecordData::callbackCarrot(std_msgs::Float64MultiArray msg) {
+	if (msg.data.size() == 0)
+		carrot_pos_ = {0,0};
+	carrot_pos_ = msg.data;
+}
+
 
 // void RecordData::callbackKeyboardInput(const std_msgs::Int32 msg){
 // 	key_ = msg.data;

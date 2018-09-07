@@ -1,14 +1,14 @@
 record_data: {
   destination: "/home/pracsys/Dropbox/transfer/",
   filename: "training_data/combined_all",
-  requested_data_ids: [1,2,3,4,5,7,8,9], # description in record_data.cpp
+  requested_data_ids: [1,2,3,4,5,7,8,9,11], # description in record_data.cpp
   data_window_size: 10,
   marker_no: 6,
-  save_images: false,
+  save_images: true,
   ref_marker_id: 0,
   obj_marker_id: 5
 }
 
 play_bags: {
   bag_directory: "/home/pracsys/Dropbox/transfer",
-  bag_files: ["cc_20_51","cc_20_52","cc_20_53","cc_20_54","cc_20_55","cc_20_56","cc_20_57","cc_20_58","cc_20_59","cc_20_60","cc_20_61","cc_20_62","cc_20_63","cc_20_64","cc_20_65","cc_20_66","cc_20_67","cc_20_68","cc_20_69","cc_20_70"]}
+  bag_files: ["pt_vs_04","pt_nn_04"]}

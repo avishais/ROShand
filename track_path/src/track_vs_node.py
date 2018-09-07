@@ -48,16 +48,64 @@ class track():
         #     self.path = np.append(self.path, np.array([self.path[-1,0]+10, self.path[-1,1]]).reshape(1,2), axis=0) 
 
         # square
-        self.path = np.empty([4,2])
-        st = 4
-        for i in range(1,self.path.shape[0]+1):
-            self.path[i-1,:] = np.array([obj_pos[0]-i*st, obj_pos[1]]).reshape(1,2)
-        for i in range(1,8):
-            self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st]).reshape(1,2), axis=0) 
-        for i in range(1,8):
-            self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
-        for i in range(1,8):
-            self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0)  
+        # self.path = np.empty([4,2])
+        # st = 4
+        # for i in range(1,self.path.shape[0]+1):
+        #     self.path[i-1,:] = np.array([obj_pos[0]-i*st, obj_pos[1]]).reshape(1,2)
+        # for i in range(1,8):
+        #     self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st]).reshape(1,2), axis=0) 
+        # for i in range(1,8):
+        #     self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+        # for i in range(1,8):
+        #     self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0) 
+
+        # Rectangle
+        m = 4
+        if m==1:
+            self.path = np.empty([8,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0]-i*st, obj_pos[1]]).reshape(1,2)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st-3]).reshape(1,2), axis=0) 
+            for i in range(1,9):
+                self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-(st-3)]).reshape(1,2), axis=0)  
+        if m==2:
+            self.path = np.empty([2,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0], obj_pos[1]-i*st]).reshape(1,2)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st]).reshape(1,2), axis=0)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
+        if m==3:
+            self.path = np.empty([8,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0]+i*st, obj_pos[1]]).reshape(1,2)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]+st-3]).reshape(1,2), axis=0) 
+            for i in range(1,9):
+                self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-(st-3)]).reshape(1,2), axis=0)  
+        if m==4:
+            self.path = np.empty([2,2])
+            st = 8
+            for i in range(1,self.path.shape[0]+1):
+                self.path[i-1,:] = np.array([obj_pos[0], obj_pos[1]+i*st]).reshape(1,2)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]+st, self.path[-1,1]]).reshape(1,2), axis=0)
+            for i in range(1,3):
+                self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0)
+            for i in range(1,8):
+                self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
+         
 
 
         plt.plot(self.path[:,0], -self.path[:,1],'.b')
@@ -103,8 +151,8 @@ class track():
         iter = 0
         carrot_point = np.array([-1, -1])
         
-        sr = rospy.Service('/trackVS/enable', SendBool, self.callbackTrackEnable)
-        sr = rospy.Service('/trackVS/stop', empty, self.callbackTrackStop)
+        sr = rospy.Service('/trackEnable', SendBool, self.callbackTrackEnable)
+        sr = rospy.Service('/trackStop', empty, self.callbackTrackStop)
         # rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
         pub = rospy.Publisher('/trackVS/car_vel_ref', UInt32, queue_size=10)
@@ -127,17 +175,17 @@ class track():
                 if np.linalg.norm(self.obj_pos-carrot_point) < 1 or np.linalg.norm(self.obj_pos-last_checkpoint) > np.linalg.norm(self.obj_pos-self.path[iter+1,:]):
                     iter += 1
                     last_checkpoint = carrot_point
-                    print('Moved to next waypoint: ' + str(self.path[iter,:]))
+                    print('******** Moved to next waypoint: ' + str(self.path[iter,:]))
 
                 carrot_point = self.path[iter,:]
                 a = self.choose_action(carrot_point)
                 print('Requesting action: ' + str(a))
                 car_vel_ref_srv(a)
 
-                pub.publish(a)
+                # pub.publish(a)
                 # rospy.sleep(0*1/self.freq+1)
                 # pub.publish(self.KEY_S)
-                if iter+1==self.path.shape[0] or np.linalg.norm(self.obj_pos-self.path[-1]) < 1:
+                if iter+1==self.path.shape[0] and np.linalg.norm(self.obj_pos-self.path[-1]) < 1: #iter+1==self.path.shape[0] or 
                     print('Reached goal!!!')
                     self.enable = False
                     car_vel_ref_srv(np.array([0,0,0,0,0,0]))
