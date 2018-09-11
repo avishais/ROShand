@@ -33,7 +33,7 @@ class Spin_predict(predict_nn):
 
     mode_ = 8
 
-    NN_threshold = 3000
+    NN_threshold = 500
 
     def __init__(self):
         predict_nn.__init__(self)

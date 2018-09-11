@@ -60,7 +60,7 @@ class track():
         #     self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0) 
 
         # Rectangle
-        m = 4
+        m = 0
         if m==1:
             self.path = np.empty([8,2])
             st = 8
@@ -105,6 +105,45 @@ class track():
                 self.path = np.append(self.path, np.array([self.path[-1,0], self.path[-1,1]-st]).reshape(1,2), axis=0)
             for i in range(1,8):
                 self.path = np.append(self.path, np.array([self.path[-1,0]-st, self.path[-1,1]]).reshape(1,2), axis=0) 
+
+        # Circle/Ellipse
+        m = 3
+        if m == 1:
+            r = 24.0
+            c = np.array([obj_pos[0], obj_pos[1]-r])
+            Th = np.linspace(-np.pi/2, 1.5*np.pi, num=36)
+            i = 0
+            self.path = np.empty((0,2))
+            for th in Th:
+                self.path = np.append(self.path, np.array([c[0]+r*np.cos(th), c[1]-0.15*r*np.sin(th)+0.85*r]).reshape(1,2), axis=0) 
+            self.path = np.delete(self.path, 0, 0)
+        if m == 2:
+            r = 24.0
+            c = np.array([obj_pos[0], obj_pos[1]-r])
+            Th = np.linspace(1.5*np.pi, -np.pi/2, num=36)
+            i = 0
+            self.path = np.empty((0,2))
+            for th in Th:
+                self.path = np.append(self.path, np.array([c[0]+r*np.cos(th), c[1]-0.18*r*np.sin(th)+0.82*r]).reshape(1,2), axis=0) 
+            self.path = np.delete(self.path, 0, 0)
+        if m == 3:
+            r = 24.0
+            c = np.array([obj_pos[0], obj_pos[1]+r])
+            Th = np.linspace(1.5*np.pi, -np.pi/2, num=36)
+            i = 0
+            self.path = np.empty((0,2))
+            for th in Th:
+                self.path = np.append(self.path, np.array([c[0]+r*np.cos(th), c[1]+0.15*r*np.sin(th)-0.85*r]).reshape(1,2), axis=0) 
+            self.path = np.delete(self.path, 0, 0)
+        if m == 4:
+            r = 24.0
+            c = np.array([obj_pos[0], obj_pos[1]+r])
+            Th = np.linspace(-np.pi/2, 1.5*np.pi, num=36)
+            i = 0
+            self.path = np.empty((0,2))
+            for th in Th:
+                self.path = np.append(self.path, np.array([c[0]+r*np.cos(th), c[1]+0.18*r*np.sin(th)-0.82*r]).reshape(1,2), axis=0) 
+            self.path = np.delete(self.path, 0, 0)
          
 
 
@@ -123,7 +162,7 @@ class track():
             if self.counter % 2 == 0:
                 plt.plot(self.obj_pos[0], -self.obj_pos[1],'.r')
                 plt.axis("equal")
-                plt.axis([200, 750, -350, -90])
+                # plt.axis([200, 750, -350, -90])
                 # plt.axis([480, 560, 50, 150])
                 plt.title("Obj. position: " + str(self.obj_pos))
                 plt.draw()
@@ -172,7 +211,7 @@ class track():
                 print(iter)
 
                 print('obj. pos: ' + str(self.obj_pos) + ', waypoint: ' + str(carrot_point) + ', dist.: (' + str(np.linalg.norm(self.obj_pos-last_checkpoint)) + ', ' + str(np.linalg.norm(self.obj_pos-self.path[iter+1,:]))) + ')'
-                if np.linalg.norm(self.obj_pos-carrot_point) < 1 or np.linalg.norm(self.obj_pos-last_checkpoint) > np.linalg.norm(self.obj_pos-self.path[iter+1,:]):
+                if np.linalg.norm(self.obj_pos-carrot_point) < 1.0 or np.linalg.norm(self.obj_pos-last_checkpoint) > np.linalg.norm(self.obj_pos-self.path[iter+1,:])*1.6:
                     iter += 1
                     last_checkpoint = carrot_point
                     print('******** Moved to next waypoint: ' + str(self.path[iter,:]))
@@ -183,7 +222,7 @@ class track():
                 car_vel_ref_srv(a)
 
                 # pub.publish(a)
-                # rospy.sleep(0*1/self.freq+1)
+                # rospy.sleep(0*1/self.freq)
                 # pub.publish(self.KEY_S)
                 if iter+1==self.path.shape[0] and np.linalg.norm(self.obj_pos-self.path[-1]) < 1: #iter+1==self.path.shape[0] or 
                     print('Reached goal!!!')
