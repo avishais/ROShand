@@ -32,7 +32,7 @@ class predict_nn:
         Qtrain = Q['Xtraining']
         print('[predict_nn Gpy] Loaded training data of ' + str(Qtrain.shape[0]) + ' points in feature conf. ' + str(self.mode) + '.')
 
-        self.W = np.array([6, 6, 3, 3, 1, 1, 3, 3])
+        self.W = np.array([1, 1, 1, 1, 1, 1, 10, 10])
         self.W = self.W.reshape((self.W.shape[0],))
         self.Xtrain = Qtrain[:,0:self.state_action_dim]
 

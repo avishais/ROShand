@@ -73,10 +73,10 @@ void playAct::Spin(double frequency) {
             get_action_path("actionPath.txt");
 
         if (loaded_path_ && enable_ && path_Iter_ < action_path_.size()) {
-            ROS_INFO("[action_node] action path node number %d: <%f,%f>.", path_Iter_, action_path_[path_Iter_][0], action_path_[path_Iter_][1]);	
+            ROS_INFO("[action_node] action path node number %d: <%.2f,%.2f>.", path_Iter_, action_path_[path_Iter_][0], action_path_[path_Iter_][1]);	
 
             std_msgs::UInt32 msg;
-            msg.data = action2key(action_path_[path_Iter_]);		
+            msg.data = action8_2key(action_path_[path_Iter_]);		
             
             ROS_INFO("[action_node] publishing action key %d.", msg.data);
             pub_pressed_key_.publish(msg);
@@ -91,7 +91,7 @@ void playAct::Spin(double frequency) {
 
         if (path_Iter_ > action_path_.size()) {
             std_msgs::UInt32 msg;
-            msg.data = action2key({0,0});	
+            msg.data = action8_2key({0,0});	
 
             pub_pressed_key_.publish(msg);
         }
@@ -114,6 +114,37 @@ int playAct::action2key(std::vector<double> a) {
 
 	if (a[0] > 0 && a[1] < 0) // right
 		return KEY_A;
+
+	if (a[0] == 0 && a[1] == 0)
+		return KEY_S;
+
+}
+
+int playAct::action8_2key(std::vector<double> a) {
+	
+	if (a[0] == 0 && a[1] == -0.4) // up-left
+		return KEY_Q;
+
+	if (a[0] == -0.4 && a[1] == 0) // up-right
+		return KEY_E;
+	
+	if (a[0] == -0.2 && a[1] == -0.2) // up
+		return KEY_W;
+
+	if (a[0] == -0.2 && a[1] == 0.2) // right
+		return KEY_D;
+
+	if (a[0] == 0.2 && a[1] == -0.2) // left
+		return KEY_A;
+
+	if (a[0] == 0.2 && a[1] == 0.2) // down
+		return KEY_X;	
+
+	if (a[0] == 0 && a[1] == 0.4) // down-right
+		return KEY_C;
+
+	if (a[0] == 0.4 && a[1] == 0) // down-left
+		return KEY_Z;
 
 	if (a[0] == 0 && a[1] == 0)
 		return KEY_S;
