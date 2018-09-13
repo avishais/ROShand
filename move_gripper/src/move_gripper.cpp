@@ -28,7 +28,6 @@ void MoveGripper::subscribeTopicsServices(){
     sub_vel_ref_ = node_handle_.subscribe("/gripper_t42/vel_ref_monitor", 1, &MoveGripper::callbackGripperVel, this);
     // pub_pos_ref_ = node_handle_.advertise<std_msgs::Float64MultiArray>("pos_ref_cat",1);
 	// pub_vel_ref_ = node_handle_.advertise<std_msgs::Float64MultiArray>("vel_ref_cat",1);
-
 }
 
 

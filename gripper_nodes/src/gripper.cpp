@@ -36,12 +36,17 @@ void Gripper::subscribeTopicsServices(){
 	srvsrvr_vel_cont_init_pos_ = node_handle_.advertiseService("/vel_cont_init_pos", &Gripper::callbackVelContInitPos, this);
 	sub_stop_ = node_handle_.subscribe("stop",1,&Gripper::stop, this);
 	sub_gripper_pose_ = node_handle_.subscribe("/gripper/pos", 1, &Gripper::callbackRefresehGripperPose, this);
+	sub_gripper_load_ = node_handle_.subscribe("/gripper/load", 1, &Gripper::callbackRefresehGripperLoad, this);
 	sub_refresh_parameters_ = node_handle_.subscribe("/system/refresh_parameters",1,&Gripper::callbackRefreshParameters, this);
 	pub_pos_ref_ = node_handle_.advertise<std_msgs::Float64MultiArray>("pos_ref_monitor",1);
 	pub_vel_ref_ = node_handle_.advertise<std_msgs::Float64MultiArray>("vel_ref_monitor",1);
 }
 
 void Gripper::readParametersFromServer(){
+	if(!node_handle_.getParam("/gripper/closed_load", closed_load_)){
+		throw std::runtime_error("[gripper] The parameter /gripper/finger_closing_position is not set.");
+	}
+
 	if(!node_handle_.getParam("/gripper/finger_initial_offset",finger_initial_offset_)){
 		ROS_WARN("[gripper] The parameter /gripper/finger_initial_offset is not set. Setting the initial offset to zero.");
 		finger_initial_offset_.resize(4);
@@ -76,6 +81,16 @@ void Gripper::readParametersFromServer(){
 	}
 }
 
+double sign(double n){
+	if (n > 0)
+		return 1.0;
+	else if (n < 0)
+		return -1.0;
+	else
+		return 0.0;
+
+}
+
 bool Gripper::velMode(){
 	return velocity_mode_on_;
 }
@@ -99,6 +114,13 @@ void Gripper::callbackRefresehGripperPose(std_msgs::Float32MultiArray msg) {
 	cur_gripper_pos_.resize(msg.data.size());
 	for(size_t i = 0; i < msg.data.size(); i++){
 		cur_gripper_pos_[i] = msg.data[i];
+	}
+}
+
+void Gripper::callbackRefresehGripperLoad(std_msgs::Float32MultiArray msg) {
+	cur_gripper_load_.resize(msg.data.size());
+	for(size_t i = 0; i < msg.data.size(); i++){
+		cur_gripper_load_[i] = msg.data[i];
 	}
 }
 
@@ -168,7 +190,37 @@ bool Gripper::close(std_srvs::Empty::Request& req, std_srvs::Empty::Response& re
 	srv_operating_mode.request.data[1] = 3;
 	srvclnt_set_operating_mode_.call(srv_operating_mode);
 #endif
-	sendCommand(finger_closing_position_);	
+	// sendCommand(finger_closing_position_);
+
+	double speed = 0.12;
+	double rate = 20;
+	int iter = 0;
+	ros::Rate loop_rate(rate);
+	while (ros::ok()){
+		auto motor_pos = readData();
+
+		for(size_t i = 0; i<motor_pos.size(); i++)
+			motor_pos[i] = motor_pos[i] + sign(motor_pos[i] - finger_opening_position_[i])*speed/rate;
+
+		std::vector<double> out;
+		out.assign(motor_pos.begin(), motor_pos.end());
+		sendCommand(out);
+
+		std::cout << "Closing... load: " << cur_gripper_load_[0] << " "  << cur_gripper_load_[1] << std::endl;
+
+		if (iter > 40 || (fabs(cur_gripper_load_[0]) > closed_load_ && fabs(cur_gripper_load_[1]) > closed_load_))
+			break;
+
+		if (iter % 7 == 0)
+			speed -= 0.01;
+		iter += 1;
+
+		// loop_rate.sleep();
+		ros::spinOnce();
+	}
+
+	return true;
+	
 }
 
 bool Gripper::open(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
@@ -258,16 +310,6 @@ void Gripper::stop(std_msgs::Empty msg){
 	for(size_t i = 0; i<motor_pos.size(); i++)
 		out.push_back(motor_pos[i]);
 	sendCommand(out);
-}
-
-double sign(double n){
-	if (n > 0)
-		return 1.0;
-	else if (n < 0)
-		return -1.0;
-	else
-		return 0.0;
-
 }
 
 void Gripper::sendCommandTraj(std::vector<double> command, double speed){

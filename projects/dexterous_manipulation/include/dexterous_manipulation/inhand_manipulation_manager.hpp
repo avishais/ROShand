@@ -26,11 +26,11 @@ class InHandManipulationManager{
 	void readGeneralParameters();
 	void publishSystemStateOnChange();
 protected:
-	enum cmd_ {start, stop, get_ready, undefined};
+	enum cmd_ {start, stop, get_ready, direct, undefined};
 	cmd_ received_command_;
 	double recorded_distance_ = 0;
 	std::vector<double> vel_ref_, finger_closing_position_;
-	enum mode_ {running, ready, stopped, getting_ready, stopping, vel_control, idle};
+	enum mode_ {running, ready, stopped, getting_ready, stopping, vel_control, idle, directing};
 	mode_ system_mode_ = stopped;
 	mode_ system_mode_old_ = stopped;
 	ros::NodeHandle node_handle_;

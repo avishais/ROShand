@@ -11,7 +11,7 @@ class Gripper{
 	ros::ServiceClient srvclnt_send_gripper_commands_;
 	ros::ServiceClient srvclnt_read_gripper_data_, srvclnt_set_operating_mode_;
 	ros::ServiceServer srvsrvr_open_,srvsrvr_set_offsets_, srvsrvr_close_, srvsrvr_vel_cont_init_pos_;
-	ros::Subscriber sub_stop_, sub_refresh_parameters_, sub_gripper_pose_;
+	ros::Subscriber sub_stop_, sub_refresh_parameters_, sub_gripper_pose_, sub_gripper_load_;
 	ros::Publisher pub_pos_ref_, pub_vel_ref_;
 	ros::ServiceServer srvsrvr_command_trajectory_;
 	ros::ServiceServer srvsrvr_vel_ref_;
@@ -21,6 +21,8 @@ class Gripper{
 	std::vector<double> vel_ref_;
 	std::vector<float> motor_pos_ref_;
 	std::vector<float> cur_gripper_pos_;
+	std::vector<float> cur_gripper_load_;
+	double closed_load_;
 	bool callbackCommandTrajectory(gripper_nodes::CommandTrajectory::Request& req, gripper_nodes::CommandTrajectory::Response& res);
 	bool callbackSetOffsets(common_msgs_gl::SendDoubleArray::Request& req, common_msgs_gl::SendDoubleArray::Response& res);
 	bool callbackVelRef(common_msgs_gl::SendDoubleArray::Request& req, common_msgs_gl::SendDoubleArray::Response& res);
@@ -45,5 +47,6 @@ protected:
 	bool close(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
 	void callbackRefreshParameters(std_msgs::Empty msg);
 	void callbackRefresehGripperPose(std_msgs::Float32MultiArray msg);
+	void callbackRefresehGripperLoad(std_msgs::Float32MultiArray msg);
 	void initialize();
 }; 
