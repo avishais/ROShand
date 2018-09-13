@@ -18,3 +18,4 @@
 #define KEY_G 103
 #define KEY_SPACE 32
 #define KEY_i 105
+#define KEY_O 111

@@ -74,15 +74,19 @@ bool InHandManipulationManager::callbackSetMode(common_msgs_gl::SendInt::Request
 		received_command_ = start;
 	else if (req.data == 2)
 		received_command_ = stop;
+	else if (req.data = 3)
+		received_command_ = direct;
 	else
 		received_command_ = undefined;
 
-	if(received_command_ == get_ready)
+	if (received_command_ == get_ready)
 		system_mode_ = getting_ready;
-	else if(received_command_ == stop)
+	else if (received_command_ == stop)
 		system_mode_ = stopping;
-	else if(received_command_ == start && system_mode_ == ready)
+	else if (received_command_ == start && system_mode_ == ready)
 		system_mode_ = running;
+	else if (received_command_ == direct)
+		system_mode_ = directing;
 	else if(received_command_ == start && system_mode_ != ready)
 		ROS_WARN("[InHandManipulationManager] Start command have been received, system is running...");
 	return true;
@@ -105,6 +109,8 @@ void InHandManipulationManager::publishSystemStateOnChange(){
 			msg.data = 5;
 		else if (system_mode_ == idle)
 			msg.data = 6;
+		else if (system_mode_ == directing)
+			msg.data = 7;
 		else
 			msg.data = -1;
 
@@ -240,6 +246,10 @@ void InHandManipulationManager::spin() {
 				ROS_INFO("[inhand_manipulation_manager] Total Distance: %f", recorded_distance_);
 				time_displayed_ = true;
 			}
+		}
+		else if (system_mode_ == directing) {
+			closeGripper();		
+			system_mode_ = vel_control;
 		}
 
 		publishSystemStateOnChange();
