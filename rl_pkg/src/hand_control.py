@@ -4,7 +4,7 @@ import rospy
 import numpy as np 
 from std_msgs.msg import Float64MultiArray, Float32MultiArray
 from std_srvs.srv import Empty
-from rl_pkg.srv import TargetAngles, IsDropped
+from rl_pkg.srv import TargetAngles, IsDropped, observation
 from openhand.srv import MoveServos
 from marker_tracker.msg import ImageSpacePoseMsg
 import math
@@ -37,8 +37,6 @@ class hand_control():
             self.finger_move_offset = rospy.get_param('~finger_move_offset')
             self.closed_load = rospy.get_param('~finger_close_load')
 
-        print(self.closed_load, self.finger_closing_position, self.finger_move_offset, self.finger_opening_position)
-
         rospy.Subscriber('/gripper/pos', Float32MultiArray, self.callbackGripperPos)
         rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
@@ -47,6 +45,7 @@ class hand_control():
         rospy.Service('/RL/CloseGripper', Empty, self.CloseGripper)
         rospy.Service('/RL/MoveGripper', TargetAngles, self.MoveGripper)
         rospy.Service('/RL/IsObjDropped', IsDropped, self.CheckDropped)
+        rospy.Service('/RL/observation', observation, self.GetObservation)
 
         self.move_servos_srv = rospy.ServiceProxy('/MoveServos', MoveServos)
 
@@ -116,6 +115,12 @@ class hand_control():
             return {'dropped': True}
 
         return {'dropped': False}
+
+    def GetObservation(self, msg):
+        obs = np.concatenate((self.obj_pos, self.gripper_load))
+
+        return {'state': obs}
+
 
 
 if __name__ == '__main__':

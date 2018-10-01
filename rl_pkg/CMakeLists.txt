@@ -58,6 +58,8 @@ add_service_files(
   FILES
   TargetAngles.srv
   IsDropped.srv
+  net_eval.srv
+  observation.srv
 )
 
 ## Generate actions in the 'action' folder
