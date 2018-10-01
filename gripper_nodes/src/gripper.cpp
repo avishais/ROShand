@@ -191,16 +191,23 @@ bool Gripper::close(std_srvs::Empty::Request& req, std_srvs::Empty::Response& re
 	srvclnt_set_operating_mode_.call(srv_operating_mode);
 #endif
 	// sendCommand(finger_closing_position_);
-
-	double speed = 0.12;
+	
+	auto motor_pos = readData();
+	double speed = 0.14;
 	double rate = 20;
 	int iter = 0;
 	ros::Rate loop_rate(rate);
+	auto last_load = cur_gripper_load_;
+	int load_count = 0;
 	while (ros::ok()){
-		auto motor_pos = readData();
 
 		for(size_t i = 0; i<motor_pos.size(); i++)
 			motor_pos[i] = motor_pos[i] + sign(motor_pos[i] - finger_opening_position_[i])*speed/rate;
+
+		if (motor_pos[0] > 0.9 || motor_pos[1] > 0.9) {
+			ROS_WARN("Gripper_node] Close to angle limit! Aborting hand closing.");
+			break;
+		}
 
 		std::vector<double> out;
 		out.assign(motor_pos.begin(), motor_pos.end());
@@ -210,6 +217,18 @@ bool Gripper::close(std_srvs::Empty::Request& req, std_srvs::Empty::Response& re
 
 		if (iter > 40 || (fabs(cur_gripper_load_[0]) > closed_load_ && fabs(cur_gripper_load_[1]) > closed_load_))
 			break;
+
+		if (fabs(last_load[0]-cur_gripper_load_[0])<1e-3 && fabs(last_load[1]-cur_gripper_load_[1])<1e-3)
+			load_count++;
+			if (load_count > 6) {
+				ROS_WARN("Gripper_node] No load update to close gripper.");
+				break;
+			}
+		else {
+			load_count = 0;
+			last_load = cur_gripper_load_;
+		}
+			
 
 		if (iter % 7 == 0)
 			speed -= 0.01;
@@ -318,10 +337,13 @@ void Gripper::sendCommandTraj(std::vector<double> command, double speed){
 	else{
 		double rate = 10;
 		ros::Rate loop_rate(rate);
-		auto motor_pos = readData();
+
+		auto motor_pos = readData();  
+		
 		bool finished;
 		executing_trajectory_ = true;
 		while (ros::ok()){
+			
 			if(stop_trigger_ == true)
 				break;
 			for(size_t i = 0; i<command.size(); i++){ 

@@ -46,8 +46,6 @@ class OpenHand():
 		self.servo_ids = servo_ids
 		num_servos = len(servo_ids)
 
-		self.flushSerial()
-
 		print "Initializing..."
 		self.servos = []
 		for servo_id in self.servo_ids:
@@ -73,12 +71,6 @@ class OpenHand():
 		time.sleep(self.pause)
 		self.reset()
 		print "Initialization Complete."
-
-	def flushSerial(self):
-		ser = serial.Serial(self.port, 57600, timeout=5)
-		ser.flushInput()
-		ser.flushOutput()
-		# sleep(.1)
 
 	def reset(self):	#returns everything to zeroed positions, different from release
 		print "[ERR] reset() not implemented"
@@ -712,8 +704,8 @@ class Model_T42(OpenHand):
 		self.moveMotor(1,amnt)
 
 	def release(self):
-		self.moveMotor(0,self.amnt_release + 0.42) # (+) Added by Avishai - should match the finger_opening_position in gripper.yaml
-		self.moveMotor(1,self.amnt_release + 0.51)
+		self.moveMotor(0,self.amnt_release + 0.2) # (+) Added by Avishai - should match the finger_opening_position in gripper.yaml
+		self.moveMotor(1,self.amnt_release + 0.33)
 
 	#model-specific OpenHand commands:
 	def flip_init(self):

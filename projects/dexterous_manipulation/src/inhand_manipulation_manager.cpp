@@ -222,6 +222,10 @@ void InHandManipulationManager::spin() {
 	while(ros::ok()){
 		if(system_mode_ == getting_ready){
 			getReady();
+
+			// Added by Avishai for fast grasp
+			ros::Duration(0.5).sleep();
+			runLoop(); 
 		}
 		else if(system_mode_ == running){
 			runLoop();
