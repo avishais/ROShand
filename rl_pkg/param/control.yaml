@@ -1,0 +1,5 @@
+finger_initial_offset: [0.00,0.0]
+finger_opening_position: [0.2,0.33]
+finger_closing_position: [0.0,0.0]
+finger_move_offset: [0.010,0.010]
+finger_close_load: 45.0
