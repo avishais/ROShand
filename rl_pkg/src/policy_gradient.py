@@ -13,6 +13,8 @@ gym: 0.8.0
 
 import numpy as np
 import tensorflow as tf
+import csv
+import os.path
 
 # reproducible
 np.random.seed(1)
@@ -26,6 +28,7 @@ class PolicyGradient:
             n_features,
             learning_rate=0.01,
             reward_decay=0.95,
+            load_saved_net=True,
             output_graph=False,
     ):
         self.n_actions = n_actions
@@ -39,6 +42,10 @@ class PolicyGradient:
 
         self.sess = tf.Session()
 
+        # Add ops to save and restore all the variables.
+        self.saved_net = '/home/pracsys/catkin_ws/src/rutgers_collab/src/rl_pkg/logs/net.ckpt'
+        self.saver = tf.train.Saver()
+
         if output_graph:
             # $ tensorboard --logdir=logs
             # http://0.0.0.0:6006/
@@ -46,6 +53,13 @@ class PolicyGradient:
             tf.summary.FileWriter("logs/", self.sess.graph)
 
         self.sess.run(tf.global_variables_initializer())
+
+        if load_saved_net and os.path.isfile(self.saved_net + '.meta'):
+            try:
+                self.saver.restore(self.sess, self.saved_net) 
+                print('Saved net loaded.')
+            except:
+                pass
 
     def _build_net(self):
         with tf.name_scope('inputs'):
@@ -86,12 +100,30 @@ class PolicyGradient:
     def choose_action(self, observation):
         prob_weights = self.sess.run(self.all_act_prob, feed_dict={self.tf_obs: observation[np.newaxis, :]})
         action = np.random.choice(range(prob_weights.shape[1]), p=prob_weights.ravel())  # select action w.r.t the actions prob
+        print('[RL] Choosing action %d with probability %f.' % (action, prob_weights[0][action]))
         return action
 
     def store_transition(self, s, a, r):
         self.ep_obs.append(s)
         self.ep_as.append(a)
         self.ep_rs.append(r)
+
+    def log_epidose_to_file(self):
+
+        with open('/home/pracsys/catkin_ws/src/rutgers_collab/src/rl_pkg/logs/observations_logs.csv', mode='a') as logfile:
+            log_writer = csv.writer(logfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL) 
+            # log_writer.writerow(['state', 'action', 'reward'])
+            for s, a, r in zip(self.ep_obs, self.ep_as, self.ep_rs):
+                log_writer.writerow([s, a, r])
+
+        save_path = self.saver.save(self.sess, self.saved_net)
+
+        # Reading would be as following:
+        # with open('name.csv') as csv_file:
+        #     csv_reader = csv.reader(csv_file, delimiter=',')
+        #     for row in csv_reader:
+        #         npvector = np.fromstring(row[index][1:-1],dtype=float, sep=' ')
+
 
     def learn(self):
         # discount and normalize episode reward
@@ -104,6 +136,7 @@ class PolicyGradient:
              self.tf_vt: discounted_ep_rs_norm,  # shape=[None, ]
         })
 
+        self.log_epidose_to_file()
         self.ep_obs, self.ep_as, self.ep_rs = [], [], []    # empty episode data
         return discounted_ep_rs_norm
 

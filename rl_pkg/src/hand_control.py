@@ -2,8 +2,8 @@
 
 import rospy
 import numpy as np 
-from std_msgs.msg import Float64MultiArray, Float32MultiArray
-from std_srvs.srv import Empty
+from std_msgs.msg import Float64MultiArray, Float32MultiArray, String
+from std_srvs.srv import Empty, EmptyResponse
 from rl_pkg.srv import TargetAngles, IsDropped, observation
 from openhand.srv import MoveServos
 from marker_tracker.msg import ImageSpacePoseMsg
@@ -25,6 +25,8 @@ class hand_control():
     R = []
     count = 1
 
+    gripper_status = 'open'
+
     move_servos_srv = 0.
 
     def __init__(self):
@@ -40,6 +42,7 @@ class hand_control():
         rospy.Subscriber('/gripper/pos', Float32MultiArray, self.callbackGripperPos)
         rospy.Subscriber('/gripper/load', Float32MultiArray, self.callbackGripperLoad)
         rospy.Subscriber('/marker_tracker/image_space_pose_msg', ImageSpacePoseMsg, self.callbackMarkers)
+        pub_gripper_status = rospy.Publisher('/RL/gripper_status', String, queue_size=10)
 
         rospy.Service('/RL/OpenGripper', Empty, self.OpenGripper)
         rospy.Service('/RL/CloseGripper', Empty, self.CloseGripper)
@@ -51,8 +54,10 @@ class hand_control():
 
         #### Later I should remove the angles from hands.py and set initial angles here at the start ####
 
-        rate = rospy.Rate(15) # 15hz
+        rate = rospy.Rate(100)
         while not rospy.is_shutdown():
+            pub_gripper_status.publish(self.gripper_status)
+
             # print(self.obj_pos)
             # rospy.spin()
             rate.sleep()
@@ -86,27 +91,53 @@ class hand_control():
     def OpenGripper(self, msg):
         self.moveGripper(self.finger_opening_position)
 
+        self.gripper_status = 'open'
+
+        return EmptyResponse()
+
     def CloseGripper(self, msg):
 
         for i in range(100):
-            print('Angles: ' + str(self.gripper_pos) + ', load: ' + str(self.gripper_load), self.closed_load)
+            # print('Angles: ' + str(self.gripper_pos) + ', load: ' + str(self.gripper_load), self.closed_load)
             if abs(self.gripper_load[0]) > self.closed_load or abs(self.gripper_load[1]) > self.closed_load:
                 rospy.loginfo('[RL] Object grasped.')
+                self.gripper_status = 'closed'
                 break
 
             desired = self.gripper_pos + self.finger_move_offset
             if desired[0] > 0.55 or desired[1] > 0.55:
-                rospy.logerror('[RL] Desired angles out of bounds.')
+                rospy.logerr('[RL] Desired angles out of bounds.')
                 break
             self.moveGripper(desired)
-            rospy.sleep(0.2)                  
+            rospy.sleep(0.2)  
+
+        return EmptyResponse()    
+
 
     def MoveGripper(self, msg):
-        self.moveGripper(msg.data)
+        # This function should accept a vector of normalized incraments to the current angles: msg.angles = [dq1, dq2], where dq1 and dq2 can be equal to 0 (no move), 1,-1 (increase or decrease angles by finger_move_offset)
+
+        inc = np.array(msg.angles)
+        inc_angles = np.multiply(self.finger_move_offset, inc)
+
+        desired = self.gripper_pos + inc_angles
+
+        suc = self.moveGripper(desired)
+
+        return {'success': suc}
     
     def moveGripper(self, angles):
-        print(angles)
+        if angles[0] > 0.7 or angles[1] > 0.7 or angles[0] < 0.1 or angles[1] < 0.1:
+            rospy.logerr('[RL] Desired angles out of bounds.')
+            return False
+
+        if abs(self.gripper_load[0]) > 300 or abs(self.gripper_load[1]) > 300:
+            rospy.logerr('[RL] Pre-overload.')
+            return False
+
         self.move_servos_srv.call(angles)
+
+        return True
 
     def CheckDropped(self, msg):
 
