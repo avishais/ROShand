@@ -1,0 +1,38 @@
+digraph G {
+node [shape=box];
+"world" [label="world"];
+"base_link" [label="base_link"];
+"finger_1_1" [label="finger_1_1"];
+"finger_1_2" [label="finger_1_2"];
+"finger_1_3" [label="finger_1_3"];
+"finger_2_1" [label="finger_2_1"];
+"finger_2_2" [label="finger_2_2"];
+"finger_2_3" [label="finger_2_3"];
+"finger_3_1" [label="finger_3_1"];
+"finger_3_2" [label="finger_3_2"];
+"finger_3_3" [label="finger_3_3"];
+"sub_base_link" [label="sub_base_link"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"world" -> "fixed" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"fixed" -> "base_link"
+"base_link" -> "base_to_finger_1_1" [label="xyz: 0.0503974 -0.026 0.063 \nrpy: 6.75551e-16 1.97994e-16 -2.77556e-16"]
+"base_to_finger_1_1" -> "finger_1_1"
+"finger_1_1" -> "finger_1_1_to_finger_1_2" [label="xyz: 0.01 0 0.0186 \nrpy: -6.2004e-16 0.28 2.22045e-16"]
+"finger_1_1_to_finger_1_2" -> "finger_1_2"
+"finger_1_2" -> "finger_1_2_to_finger_1_3" [label="xyz: 0.076 0 0.0025 \nrpy: 0 -0 0"]
+"finger_1_2_to_finger_1_3" -> "finger_1_3"
+"base_link" -> "base_to_finger_2_1" [label="xyz: 0.0503974 0.026 0.063 \nrpy: 1.22459e-15 -7.33448e-16 -1.66533e-16"]
+"base_to_finger_2_1" -> "finger_2_1"
+"finger_2_1" -> "finger_2_1_to_finger_2_2" [label="xyz: 0.01 0 0.0186 \nrpy: -1.16908e-15 0.28 1.11022e-16"]
+"finger_2_1_to_finger_2_2" -> "finger_2_2"
+"finger_2_2" -> "finger_2_2_to_finger_2_3" [label="xyz: 0.076 0 0.0025 \nrpy: 0 -0 0"]
+"finger_2_2_to_finger_2_3" -> "finger_2_3"
+"base_link" -> "base_to_finger_3_1" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"base_to_finger_3_1" -> "finger_3_1"
+"finger_3_1" -> "finger_3_1_to_finger_3_2" [label="xyz: -0.03 0 0.0816 \nrpy: -5.55112e-17 0.28 3.14159"]
+"finger_3_1_to_finger_3_2" -> "finger_3_2"
+"finger_3_2" -> "finger_3_2_to_finger_3_3" [label="xyz: 0.076 0 0.0025 \nrpy: -1.48888e-45 -1.09959e-76 -7.38532e-32"]
+"finger_3_2_to_finger_3_3" -> "finger_3_3"
+"base_link" -> "base_to_sub_base" [label="xyz: 0 0 -1 \nrpy: 0 -0 0"]
+"base_to_sub_base" -> "sub_base_link"
+}
