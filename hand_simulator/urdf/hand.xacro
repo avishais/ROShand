@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand_model">
+
+ 	<xacro:macro name="base_color">
+ 		<color rgba="0.1 0.1 0.1 1"/>
+ 	</xacro:macro>
+
+ 	<xacro:macro name="swivel_color">
+ 		<color rgba="0.1 0.1 0.1 1"/>
+ 	</xacro:macro>
+
+ 	<xacro:macro name="proximal_color">
+ 		<color rgba="0.16 0.16 0.16 1"/>
+ 	</xacro:macro>
+
+ 	 <xacro:macro name="distal_color">
+ 		<color rgba="0.16 0.16 0.16 1"/>
+ 	</xacro:macro>
+
+ 	<xacro:macro name="flex_color">
+ 		<color rgba="0.2 0.2 .2 1"/>
+ 	</xacro:macro>
+
+  <xacro:macro name="pad_color">
+    <color rgba="0.106 0.227 0.631 1"/>
+  </xacro:macro>  
+
+  
+ <link name="world"/>
+
+    <link name="base_link">
+      <visual>
+          <origin rpy="0. 0 0" xyz="0 0 0"/>
+          <geometry>
+            <mesh filename="package://urdf_display/meshes/base_link.STL"/>
+          </geometry>
+          <material
+            name="">
+            <xacro:base_color/>
+          </material>
+      </visual>
+      <inertial>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="0.1"/>
+          <inertia
+            ixx="0.0" ixy="0.0" ixz="0.0"
+            iyy="0.0" iyz="0.0"
+            izz="0.0"/>
+      </inertial>
+      <collision>
+        <origin rpy="0.5 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://urdf_display/meshes/base_link.STL"/>
+        </geometry>
+      </collision>
+    </link>
+
+  <!-- <a> This is strange: Links for Finger 1 but true! </a>-->
+    <link name="finger_1_1">
+      <visual>
+        <geometry>
+          <mesh filename="package://urdf_display/meshes/swivel_1.STL"/>
+        </geometry>
+        <material
+          name="">
+          <xacro:swivel_color/>
+        </material>
+      </visual>
+      <inertial>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="0.1"/>
+          <inertia
+            ixx="0.0" ixy="0.0" ixz="0.0"
+            iyy="0.0" iyz="0.0"
+            izz="0.0"/>
+      </inertial>
+      <collision>
+        <!-- <origin rpy="0 0 0" xyz="0 0 0"/> -->
+        <geometry>
+          <mesh filename="package://urdf_display/meshes/swivel_1.STL"/>
+        </geometry>
+      </collision>
+    </link>
+
+ 
+
+
+
+    <joint name="fixed" type="fixed">
+      <parent link="world"/>
+      <child link="base_link"/>
+    </joint>
+    
+    <joint name="base_to_finger_1_1" type="revolute">
+      <parent link="base_link"/>
+      <child link="finger_1_1"/>
+      <limit effort="1000.0" lower="-2.0" upper="1.57" velocity="0.5"/>
+      <axis xyz="0 0 -1"/>
+      <origin
+        xyz="0.0503973683071414 -0.026 0.063"
+        rpy="6.75550818663469E-16 1.97993848419069E-16 -2.77555756156289E-16" />
+    </joint>
+
+
+
+  
+
+
+
+
+
+
+</robot>
