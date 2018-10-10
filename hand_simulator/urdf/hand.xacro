@@ -321,7 +321,9 @@
         <material>Gazebo/Red</material>
     </gazebo>
 
+    <!-- Joints -->
 
+        
 
     <joint name="world_to_base" type="fixed">
       <parent link="world"/>
@@ -349,6 +351,14 @@
       <origin
       xyz="0.01 0 0.0186"
       rpy="-6.20039667432211E-16 0.28 2.22044604925031E-16" />
+      <axis>
+        <dynamics>
+          <spring_stiffness>1.0</spring_stiffness>
+          <spring_reference>0.0</spring_reference>
+          <damping>0.0</damping>
+          <friction>0.0</friction>
+        </dynamics>
+      </axis>
     </joint>
 
     <joint name="finger_1_2_to_finger_1_3" type="revolute">
