@@ -25,7 +25,9 @@
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
         args="-z 0.0 -unpause -urdf -model $(arg world) -param robot_description" respawn="false" output="screen" />
 
-  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.7 -z 1 -model object" />
+  <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/table.urdf -urdf -x 0 -z 0 -model table" />
+
+  <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.17 -z 0.6 -model object" />
 
   <!-- ros_control hand launch file -->
   <!--include file="$(find hand_simulator)/launch/hand_control.launch" /-->

@@ -29,29 +29,13 @@
   
  <link name="world"/>
 
-    <link name="table">
-      <visual>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <geometry>
-          <box size="0.5 0.5 0.5" />
-        </geometry>
-        <material name="white"/>
-      </visual>
-      <inertial>
-          <origin xyz="0 0 0.3" rpy="0 0 0"/>
-          <mass value="0.1"/>
-          <inertia
-            ixx="0.0" ixy="0.0" ixz="0.0"
-            iyy="0.0" iyz="0.0"
-            izz="0.0"/>
-        </inertial>
-    </link>
+    
 
     <link name="base_link">
       <visual>
           <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
-            <mesh filename="package://urdf_display/meshes/base_link.STL"/>
+            <mesh filename="package://hand_simulator/meshes/base_link.STL"/>
           </geometry>
           <material
             name="">
@@ -69,17 +53,20 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/base_link.STL"/>
+          <mesh filename="package://hand_simulator/meshes/base_link.STL"/>
         </geometry>
       </collision>
     </link>
+    <gazebo reference="base_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
 
     
   <!-- <a> This is strange: Links for Finger 1 but true! </a>-->
     <link name="finger_1_1">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/swivel_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/swivel_1.STL"/>
         </geometry>
         <material
           name="">
@@ -97,15 +84,18 @@
       <collision>
         <!-- <origin rpy="0 0 0" xyz="0 0 0"/> -->
         <geometry>
-          <mesh filename="package://urdf_display/meshes/swivel_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/swivel_1.STL"/>
         </geometry>
       </collision>
     </link>
+    <gazebo reference="finger_1_1">
+      <material>Gazebo/Red</material>
+    </gazebo>
 
     <link name="finger_1_2">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/proximal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/proximal_1.STL"/>
         </geometry>
         <origin
           xyz="-0.011 0.007 0.011"
@@ -126,15 +116,19 @@
       <collision>
         <origin rpy="3.1459 0 0" xyz="-0.011 0.007 0.011"/>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/proximal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/proximal_1.STL"/>
         </geometry>
       </collision>
+      
     </link>
+    <gazebo reference="finger_1_2">
+      <material>Gazebo/Red</material>
+    </gazebo>
 
     <link name="finger_1_3">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/distal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/distal_1.STL"/>
         </geometry>
         <origin
           xyz="-0.077 0.007 0.007"
@@ -155,16 +149,19 @@
       <collision>
         <origin rpy="3.1459 0 0" xyz="-0.077 0.007 0.007"/>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/distal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/distal_1.STL"/>
         </geometry>
       </collision>
     </link>
+    <gazebo reference="finger_1_3">
+      <material>Gazebo/Red</material>
+    </gazebo>
 
     <!-- <a> This is strange: Links for Finger 2 but true! </a>-->
     <link name="finger_2_1">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/swivel_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/swivel_1.STL"/>
         </geometry>
         <material
           name="">
@@ -182,15 +179,18 @@
       <collision>
         <!-- <origin rpy="0 0 0" xyz="0 0 0"/> -->
         <geometry>
-          <mesh filename="package://urdf_display/meshes/swivel_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/swivel_1.STL"/>
         </geometry>
       </collision>
     </link>
+    <gazebo reference="finger_2_1">
+      <material>Gazebo/Red</material>
+    </gazebo>
 
     <link name="finger_2_2">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/proximal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/proximal_1.STL"/>
         </geometry>
         <origin
         xyz="-0.011 0.007 0.011"
@@ -212,15 +212,18 @@
       <collision>
         <origin rpy="3.1459 0 0" xyz="-0.011 0.007 0.011"/>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/proximal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/proximal_1.STL"/>
         </geometry>
       </collision>
     </link>
+    <gazebo reference="finger_2_2">
+        <material>Gazebo/Red</material>
+    </gazebo>
 
     <link name="finger_2_3">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/distal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/distal_1.STL"/>
         </geometry>
         <origin
         xyz="-0.077 0.007 0.006"
@@ -242,15 +245,18 @@
       <collision>
         <origin rpy="3.1459 0 0" xyz="-0.077 0.007 0.006"/>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/distal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/distal_1.STL"/>
         </geometry>
       </collision>
     </link>
+    <gazebo reference="finger_2_3">
+        <material>Gazebo/Red</material>
+    </gazebo>
 
     <link name="finger_3_2">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/proximal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/proximal_1.STL"/>
         </geometry>
         <origin
         xyz="-0.011 0.007 0.011"
@@ -272,15 +278,19 @@
       <collision>
         <origin rpy="3.1459 0 0" xyz="-0.011 0.007 0.011"/>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/proximal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/proximal_1.STL"/>
         </geometry>
       </collision>
+      
     </link>
+    <gazebo reference="finger_3_2">
+        <material>Gazebo/Red</material>
+    </gazebo>
 
     <link name="finger_3_3">
       <visual>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/distal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/distal_1.STL"/>
         </geometry>
         <origin
         xyz="-0.077 0.007 0.006"
@@ -302,24 +312,23 @@
       <collision>
         <origin rpy="3.1459 0 0" xyz="-0.077 0.007 0.006"/>
         <geometry>
-          <mesh filename="package://urdf_display/meshes/distal_1.STL"/>
+          <mesh filename="package://hand_simulator/meshes/distal_1.STL"/>
         </geometry>
       </collision>
+      
     </link>
+    <gazebo reference="finger_3_3">
+        <material>Gazebo/Red</material>
+    </gazebo>
 
 
-    <joint name="world_to_table" type="fixed">
-      <parent link="world"/>
-      <child link="table"/>
-      <origin xyz="0 0 0.0"/>
-    </joint>
 
     <joint name="world_to_base" type="fixed">
       <parent link="world"/>
       <child link="base_link"/>
       <origin
-        xyz="0.25 0 0.6"
-        rpy="0 1.57 0" />
+        xyz="0.37 0 0.5"
+        rpy="0 -1.57 0" />
     </joint>
     
     <joint name="base_to_finger_1_1" type="revolute">
@@ -424,7 +433,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="finger_1_1_to_finger_1_2">
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -434,7 +443,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="finger_1_2_to_finger_1_3">
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -454,7 +463,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="finger_2_1_to_finger_2_2">
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -464,7 +473,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="finger_2_2_to_finger_2_3">
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -474,7 +483,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="base_to_finger_3_2">
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -484,7 +493,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="finger_3_2_to_finger_3_3">
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
   
