@@ -11,20 +11,21 @@
         </inertial> 
         <visual>
             <geometry>
-                <cylinder length="0.09" radius="0.03"/>
+                <cylinder length="0.09" radius="0.025"/>
             </geometry>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <material name="Blue" />
         </visual>
         <collision>
             <geometry>
-                <cylinder length="0.09" radius="0.03"/>
+                <cylinder length="0.09" radius="0.025"/>
             </geometry>
             <origin rpy="0 0 0" xyz="0 0 0"/>
         </collision>
     </link>
 
-  <gazebo reference="cyl">
-    <material>Gazebo/Blue</material>
-  </gazebo>
+    <gazebo reference="finger_3_3">
+        <material>Gazebo/Chrome </material>
+    </gazebo>
+
 </robot>
