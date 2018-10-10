@@ -29,13 +29,9 @@ hand:
     type: position_controllers/JointPositionController
     joint: finger_2_2_to_finger_2_3
     pid: {p: 100.0, i: 0.01, d: 10.0}
-  base_to_finger_3_1_position_controller:
+  base_to_finger_3_2_position_controller:
     type: position_controllers/JointPositionController
-    joint: base_to_finger_3_1
-    pid: {p: 100.0, i: 0.01, d: 10.0}
-  finger_3_1_to_finger_3_2_position_controller:
-    type: position_controllers/JointPositionController
-    joint: finger_3_1_to_finger_3_2
+    joint: base_to_finger_3_2
     pid: {p: 100.0, i: 0.01, d: 10.0}
   finger_3_2_to_finger_3_3_position_controller:
     type: position_controllers/JointPositionController

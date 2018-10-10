@@ -23,7 +23,9 @@
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-z 1.0 -unpause -urdf -model $(arg world) -param robot_description" respawn="false" output="screen" />
+        args="-z 0.0 -unpause -urdf -model $(arg world) -param robot_description" respawn="false" output="screen" />
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.7 -z 1 -model object" />
 
   <!-- ros_control hand launch file -->
   <!--include file="$(find hand_simulator)/launch/hand_control.launch" /-->
