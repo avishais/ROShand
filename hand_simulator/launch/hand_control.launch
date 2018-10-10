@@ -5,12 +5,14 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/hand" args="base_to_finger_1_1_position_controller finger_1_1_to_finger_1_2_position_controller finger_1_2_to_finger_1_3_position_controller base_to_finger_2_1_position_controller finger_2_1_to_finger_2_2_position_controller finger_2_2_to_finger_2_3_position_controller base_to_finger_3_2_position_controller finger_3_2_to_finger_3_3_position_controller joint_state_controller"/>
+    output="screen" ns="/hand" args="base_to_finger_1_1_position_controller finger_1_1_to_finger_1_2_position_controller finger_1_2_to_finger_1_3_position_controller base_to_finger_2_1_position_controller finger_2_1_to_finger_2_2_position_controller finger_2_2_to_finger_2_3_position_controller base_to_finger_3_2_position_controller finger_3_2_to_finger_3_3_position_controller"/>
 
-  <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
+  <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" ns="/hand" />
+
+  <!-- <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
     <param name="publish_frequency" type="double" value="30.0" />
     <remap from="/joint_states" to="/hand/joint_states" />
-  </node>
+  </node> -->
 
   <node pkg="hand_simulator" type="hand_node.py" name="hand_node" output="screen"></node>
 

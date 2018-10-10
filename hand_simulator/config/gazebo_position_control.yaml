@@ -1,0 +1,4 @@
+gazebo_ros_control:
+  pid_gains:
+    base_to_finger_1_1: {p: 100.0, i: 0.01, d: 10.0}
+    base_to_finger_2_1: {p: 100.0, i: 0.01, d: 10.0}
