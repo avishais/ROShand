@@ -14,6 +14,7 @@ class SimHandNode():
     Q = np.array([[300, 0],[0, 300]])
     R = np.array([[1,0],[0.5,0],[0,1],[0,0.5]])
     dq = 0.001
+    
 
     def __init__(self, num_fingers = 2):
         rospy.init_node('SimHandNode', anonymous=True)
@@ -38,8 +39,8 @@ class SimHandNode():
         rate = rospy.Rate(100)
         while not rospy.is_shutdown():
             if self.num_fingers == 2:
-                # self.pub_f3_jb2.publish(0.)
-                # self.pub_f3_j23.publish(0.)
+                self.pub_f3_jb2.publish(0.)
+                self.pub_f3_j23.publish(0.)
                 self.pub_f1_jb1.publish(np.pi/2)
                 self.pub_f2_jb1.publish(-np.pi/2)
 
