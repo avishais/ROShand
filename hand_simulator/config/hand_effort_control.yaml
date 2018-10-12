@@ -5,6 +5,10 @@ hand:
     publish_rate: 50  
 
   # Controllers ---------------------------------------
+  rail_to_base_controller: # Lift
+    type: position_controllers/JointPositionController
+    joint: rail_to_base
+    pid: {p: 300.0, i: 0.01, d: 10.0}
   base_to_finger_1_1_position_controller:
     type: position_controllers/JointPositionController
     joint: base_to_finger_1_1

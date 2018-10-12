@@ -7,7 +7,7 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
   <arg name="model" default="$(find hand_simulator)/urdf/hand.xacro"/>
-  <arg name="world" default="$(find hand_simulator)/worlds/hand.world"/>
+  <!-- <arg name="world" default="$(find hand_simulator)/worlds/hand.world"/> -->
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">

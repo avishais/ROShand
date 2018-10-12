@@ -26,10 +26,37 @@
     <color rgba="0.106 0.227 0.631 1"/>
   </xacro:macro>  
 
+  <xacro:property name="rubber_friction_coefficient" value="1.16" />
+  <xacro:property name="rubber_contact_stiffness_coefficient" value="1000000.0" />
+  <xacro:property name="rubber_contact_damping_coefficient" value="1.0" />
+
   
  <link name="world"/>
 
-    
+    <link name="rail">
+      <visual>
+          <origin rpy="0 0 0" xyz="0 0 0"/>
+          <geometry>
+            <cylinder length="0.7" radius="0.02"/>
+          </geometry>
+          <material
+            name="">
+            <xacro:base_color/>
+          </material>
+      </visual>
+      <inertial>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="0.1"/>
+          <inertia
+            ixx="0.0" ixy="0.0" ixz="0.0"
+            iyy="0.0" iyz="0.0"
+            izz="0.0"/>
+      </inertial>
+    </link>
+    <gazebo reference="rail">
+      <selfCollide>true</selfCollide>
+      <material>Gazebo/White</material>
+    </gazebo>
 
     <link name="base_link">
       <visual>
@@ -58,6 +85,7 @@
       </collision>
     </link>
     <gazebo reference="base_link">
+      <selfCollide>true</selfCollide>
       <material>Gazebo/Black</material>
     </gazebo>
 
@@ -89,6 +117,7 @@
       </collision>
     </link>
     <gazebo reference="finger_1_1">
+      <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -122,6 +151,11 @@
       
     </link>
     <gazebo reference="finger_1_2">
+      <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -154,6 +188,11 @@
       </collision>
     </link>
     <gazebo reference="finger_1_3">
+      <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -184,6 +223,7 @@
       </collision>
     </link>
     <gazebo reference="finger_2_1">
+      <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -217,6 +257,11 @@
       </collision>
     </link>
     <gazebo reference="finger_2_2">
+        <selfCollide>true</selfCollide>
+        <mu1>${rubber_friction_coefficient}</mu1>
+        <mu2>${rubber_friction_coefficient}</mu2>
+        <kp>${rubber_contact_stiffness_coefficient}</kp>
+        <kd>${rubber_contact_damping_coefficient}</kd>
         <material>Gazebo/Red</material>
     </gazebo>
 
@@ -250,7 +295,12 @@
       </collision>
     </link>
     <gazebo reference="finger_2_3">
-        <material>Gazebo/Red</material>
+      <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
+      <material>Gazebo/Red</material>
     </gazebo>
 
     <link name="finger_3_2">
@@ -284,7 +334,12 @@
       
     </link>
     <gazebo reference="finger_3_2">
-        <material>Gazebo/Red</material>
+      <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
+      <material>Gazebo/Red</material>
     </gazebo>
 
     <link name="finger_3_3">
@@ -318,19 +373,42 @@
       
     </link>
     <gazebo reference="finger_3_3">
-        <material>Gazebo/Red</material>
+      <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
+      <material>Gazebo/Red</material>
     </gazebo>
 
+    
     <!-- Joints -->
 
-        
-
-    <joint name="world_to_base" type="fixed">
+    <!-- <joint name="world_to_base" type="fixed">
       <parent link="world"/>
       <child link="base_link"/>
       <origin
         xyz="0.37 0 0.5"
         rpy="0 -1.57 0" />
+    </joint> -->
+
+    <joint name="world_to_rail" type="fixed">
+      <parent link="world"/>
+      <child link="rail"/>
+      <origin
+        xyz="0.37 0 0.35"
+        rpy="0 0 0" />
+    </joint>
+
+    <joint name="rail_to_base" type="prismatic">
+      <parent link="rail"/>
+      <child link="base_link"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="1000.0" lower="-100." upper="100." velocity="0.5"/>
+      <origin
+        xyz="0.0 0 0.23"
+        rpy="0 -1.57 0" />
+      <dynamics damping="10"/>
     </joint>
     
     <joint name="base_to_finger_1_1" type="revolute">
@@ -346,7 +424,7 @@
     <joint name="finger_1_1_to_finger_1_2" type="revolute">
       <parent link="finger_1_1"/>
       <child link="finger_1_2"/>
-      <limit effort="1000.0" lower="-0.1" upper="2.0" velocity="0.5"/>
+      <limit effort="1000.0" lower="-0.1" upper="3.0" velocity="0.5"/>
       <axis xyz="0 -1 0"/>
       <origin
       xyz="0.01 0 0.0186"
@@ -380,7 +458,7 @@
       <parent link="finger_2_1"/>
       <child link="finger_2_2"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="1000.0" lower="-0.1" upper="2.0" velocity="0.5"/>
+      <limit effort="1000.0" lower="-0.1" upper="3.0" velocity="0.5"/>
       <origin
       xyz="0.01 0 0.0186"
       rpy="-1.16908225836102E-15 0.28 1.11022302462515E-16" />
@@ -425,7 +503,18 @@
 
       <!-- This block connects the head_swivel joint to an actuator (motor), which informs both
   simulation and visualization of the robot -->
-    <transmission name="finger1_1_trans" type="SimpleTransmission">
+
+  <transmission name="lift" type="SimpleTransmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="$lift_motor">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+      <joint name="rail_to_base">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+  </transmission>
+
+  <transmission name="finger1_1_trans" type="SimpleTransmission">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="$finger11_motor">
           <mechanicalReduction>1</mechanicalReduction>
