@@ -5,38 +5,49 @@ import numpy as np
 from std_msgs.msg import Float64
 from hand_simulator.srv import MoveServos
 from std_msgs.msg import Float64MultiArray, Float32MultiArray
+from std_srvs.srv import Empty, EmptyResponse
 
 
 
 class SimHandNode():
 
-    act_torque = np.array([0.,0.,0.,0.]) # left_proximal, left_lateral, right_proximal, right_lateral
+    act_torque = np.array([0.,0.,0.,0.]) # left_proximal, left_distal, right_proximal, right_distal
     act_angles = None # actuator angles of all three fingers
-    fingers_angles = np.array([0.,0.,0.,0.]) # left_proximal, left_lateral, right_proximal, right_lateral
-    ref_angles = np.array([0.,0.,0.,0.,0.,0.]) # spring reference angle left_proximal, left_lateral, right_proximal, right_lateral    
-
-    max_f = 300. # max tendon force
-    h1 = 1; h2 = 0.5 # # Tendon force distribution on the finger
-    Q = np.array([[max_f, 0., 0.],[0., max_f, 0.],[0., 0., max_f]])
-    R = np.array([[h1,0.,0.],[h2,0.,0.],[0.,h1,0.],[0.,h2,0.],[0.,0.,h1],[0.,0.,h2]])
-
-    k1 = 5
-    k2 = 10
-    K = np.diag([k1,k2,k1,k2,k1,k2]) # Springs coefficients
+    fingers_angles = np.array([0.,0.,0.,0.]) # left_proximal, left_distal, right_proximal, right_distal
+    ref_angles = np.array([0.,0.,0.,0.,0.,0.]) # spring reference angle left_proximal, left_distal, right_proximal, right_distal   
+    lift_values = np.array([0.,0.])   
+    lift_flag = False # False means lift down
     
-
-    def __init__(self, num_fingers = 2):
+    def __init__(self):
         rospy.init_node('SimHandNode', anonymous=True)
 
-        self.num_fingers = num_fingers
-        self.act_angles = np.zeros(num_fingers) # Normalized actuators angles [0,1]
-        self.Q = self.Q[:num_fingers,:num_fingers]
-        self.R = self.R[:2*num_fingers,:num_fingers]
-        self.K = self.K[:2*num_fingers,:2*num_fingers]
-        self.ref_angles = self.ref_angles[:2*num_fingers].reshape(2*num_fingers,1)
+        if rospy.has_param('~gripper_type'):
+            Gtype = rospy.get_param('~gripper_type')
+            if Gtype=='model_T42':
+                self.num_fingers = 2
+            if Gtype=='model_O':
+                self.num_fingers = 3
+            k1 = rospy.get_param('~proximal_finger_spring_coefficient')
+            k2 = rospy.get_param('~distal_finger_spring_coefficient')
+            max_f = rospy.get_param('~tendon_max_force') # max tendon force
+            h = rospy.get_param('~finger_tendon_force_distribution') # Tendon force distribution on the finger
+            self.lift_values = rospy.get_param('~lift_values')
+
+        print(self.lift_values)
+
+        self.Q = np.array([[max_f, 0., 0.],[0., max_f, 0.],[0., 0., max_f]])
+        self.R = np.array([[h[0],0.,0.],[h[1],0.,0.],[0.,h[0],0.],[0.,h[1],0.],[0.,0.,h[0]],[0.,0.,h[1]]])
+        self.K = np.diag([k1,k2,k1,k2,k1,k2]) # Springs coefficients
+
+        self.act_angles = np.zeros(self.num_fingers) # Normalized actuators angles [0,1]
+        self.Q = self.Q[:self.num_fingers,:self.num_fingers]
+        self.R = self.R[:2*self.num_fingers,:self.num_fingers]
+        self.K = self.K[:2*self.num_fingers,:2*self.num_fingers]
+        self.ref_angles = self.ref_angles[:2*self.num_fingers].reshape(2*self.num_fingers,1)
 
         #initialize service handlers:
-        rospy.Service('MoveServos',MoveServos,self.MoveServosProxy)
+        rospy.Service('MoveServos', MoveServos, self.MoveServosProxy)
+        rospy.Service('LiftHand', Empty, self.LiftHandProxy)
 
         rospy.Subscriber('/hand/my_joint_states', Float32MultiArray, self.JointStatesCallback)
 
@@ -48,6 +59,7 @@ class SimHandNode():
         self.pub_f2_j23 = rospy.Publisher('/hand/finger_2_2_to_finger_2_3_position_controller/command', Float64, queue_size=10)
         self.pub_f3_jb2 = rospy.Publisher('/hand/base_to_finger_3_2_position_controller/command', Float64, queue_size=10)
         self.pub_f3_j23 = rospy.Publisher('/hand/finger_3_2_to_finger_3_3_position_controller/command', Float64, queue_size=10)
+        self.pub_lift = rospy.Publisher('/hand/rail_to_base_controller/command', Float64, queue_size=10)
 
         self.gripper_angles_pub = rospy.Publisher('/gripper/pos', Float32MultiArray, queue_size=10)
         self.gripper_load_pub = rospy.Publisher('/gripper/load', Float32MultiArray, queue_size=10)
@@ -71,6 +83,7 @@ class SimHandNode():
             if self.num_fingers > 2:
                 self.pub_f3_jb2.publish(self.act_torque[4])
                 self.pub_f3_j23.publish(self.act_torque[5])
+            self.pub_lift.publish(self.lift_values[int(self.lift_flag==True)])
             
             msg.data = self.act_angles
             self.gripper_angles_pub.publish(msg)
@@ -95,10 +108,17 @@ class SimHandNode():
 
         return 0
 
+    def LiftHandProxy(self, req):
+
+        self.lift_flag = not self.lift_flag
+
+        return EmptyResponse() 
+
+
 
 if __name__ == '__main__':
 
     try:
-        SimHandNode(2)
+        SimHandNode()
     except rospy.ROSInterruptException:
         pass

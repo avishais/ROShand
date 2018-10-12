@@ -5,7 +5,7 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/hand" args="base_to_finger_1_1_position_controller finger_1_1_to_finger_1_2_position_controller finger_1_2_to_finger_1_3_position_controller base_to_finger_2_1_position_controller finger_2_1_to_finger_2_2_position_controller finger_2_2_to_finger_2_3_position_controller base_to_finger_3_2_position_controller finger_3_2_to_finger_3_3_position_controller"/>
+    output="screen" ns="/hand" args="rail_to_base_controller base_to_finger_1_1_position_controller finger_1_1_to_finger_1_2_position_controller finger_1_2_to_finger_1_3_position_controller base_to_finger_2_1_position_controller finger_2_1_to_finger_2_2_position_controller finger_2_2_to_finger_2_3_position_controller base_to_finger_3_2_position_controller finger_3_2_to_finger_3_3_position_controller"/>
 
   <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" ns="/hand" />
 
@@ -14,6 +14,8 @@
     <remap from="/joint_states" to="/hand/joint_states" />
   </node> -->
 
-  <!-- <node pkg="hand_simulator" type="hand_node.py" name="hand_node" output="screen"></node> -->
+  <node pkg="hand_simulator" type="hand_node.py" name="hand_node" output="screen">
+    <rosparam command="load" file="$(find hand_simulator)/param/gripper.yaml" />  
+  </node>
 
 </launch>
