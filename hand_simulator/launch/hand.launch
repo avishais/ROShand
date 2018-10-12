@@ -25,11 +25,11 @@
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-z 0.0 -unpause -urdf -model $(arg world) -param robot_description" respawn="false" output="screen" />
+        args="-z 0.0 -unpause -urdf -model my_world -param robot_description" respawn="false" output="screen" />
 
   <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/table.urdf -urdf -x 0 -z 0 -model table" />
 
-  <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.17 -z 0.6 -model object" />
+  <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.185 -z 0.6 -model object" />
 
   <!-- Load custom joint_state_publisher -->
   <node pkg="hand_simulator" type="my_joint_state_publisher.py" name="my_joint_state_publisher" output="screen"></node>
