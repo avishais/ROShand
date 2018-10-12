@@ -336,7 +336,7 @@
     <joint name="base_to_finger_1_1" type="revolute">
       <parent link="base_link"/>
       <child link="finger_1_1"/>
-      <limit effort="1000.0" lower="-2.0" upper="1.57" velocity="0.5"/>
+      <limit effort="1000.0" lower="0." upper="1.57" velocity="0.5"/>
       <axis xyz="0 0 -1"/>
       <origin
         xyz="0.0503973683071414 -0.026 0.063"
@@ -346,19 +346,12 @@
     <joint name="finger_1_1_to_finger_1_2" type="revolute">
       <parent link="finger_1_1"/>
       <child link="finger_1_2"/>
-      <limit effort="1000.0" lower="-0.1" upper="3.0" velocity="0.5"/>
+      <limit effort="1000.0" lower="-0.1" upper="2.0" velocity="0.5"/>
       <axis xyz="0 -1 0"/>
       <origin
       xyz="0.01 0 0.0186"
       rpy="-6.20039667432211E-16 0.28 2.22044604925031E-16" />
-      <axis>
-        <dynamics>
-          <spring_stiffness>1.0</spring_stiffness>
-          <spring_reference>0.0</spring_reference>
-          <damping>0.0</damping>
-          <friction>0.0</friction>
-        </dynamics>
-      </axis>
+      <dynamics damping="5"/>
     </joint>
 
     <joint name="finger_1_2_to_finger_1_3" type="revolute">
@@ -369,12 +362,13 @@
       <origin
       xyz="0.07600000000000001 0 0.00250000000000002"
       rpy="0 0 0" />
+      <dynamics damping="5"/>
     </joint>
 
     <joint name="base_to_finger_2_1" type="revolute">
       <parent link="base_link"/>
       <child link="finger_2_1"/>
-      <limit effort="1000.0" lower="-2.0" upper="1.57" velocity="0.5"/>
+      <limit effort="1000.0" lower="-1.57" upper="0." velocity="0.5"/>
       <axis xyz="0 0 -1"/>
       <origin
       xyz="0.0503973683071413 0.0259999999999999 0.063"
@@ -386,10 +380,11 @@
       <parent link="finger_2_1"/>
       <child link="finger_2_2"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="1000.0" lower="-0.1" upper="3.0" velocity="0.5"/>
+      <limit effort="1000.0" lower="-0.1" upper="2.0" velocity="0.5"/>
       <origin
       xyz="0.01 0 0.0186"
       rpy="-1.16908225836102E-15 0.28 1.11022302462515E-16" />
+      <dynamics damping="5"/>
     </joint>
 
     <joint name="finger_2_2_to_finger_2_3" type="revolute">
@@ -401,6 +396,7 @@
       xyz="0.0760000000000001 0 0.00249999999999997"
       rpy="0 0 0" />
       <origin xyz="0 2 0"/>
+      <dynamics damping="5"/>
     </joint>
 
     <joint name="base_to_finger_3_2" type="revolute">
@@ -412,6 +408,7 @@
       xyz="-0.0299999999999996 0 0.0816000000000002"
       rpy="-5.55111512312578E-17 0.28 3.14159265358979" />
       <origin xyz="0 0 0.5"/>
+      <dynamics damping="5"/>
     </joint>
 
     <joint name="finger_3_2_to_finger_3_3" type="revolute">
@@ -423,6 +420,7 @@
       xyz="0.0760000000000001 0 0.0025"
       rpy="-1.48887961834512E-45 -1.0995850059156E-76 -7.38531841236285E-32" />
       <origin xyz="0 -2 0"/>
+      <dynamics damping="5"/>
     </joint>
 
       <!-- This block connects the head_swivel joint to an actuator (motor), which informs both

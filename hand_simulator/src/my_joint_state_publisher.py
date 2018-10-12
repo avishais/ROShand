@@ -31,15 +31,7 @@ class my_joint_state_publisher():
             rate.sleep()
 
     def linkStatesCallback(self, msg):
-        '''
-        0 - ground
-        1 - table
-        2 - base_link
-        3 - finger_1_1
-        4 - 1_2
-        5 - 1_3
-        6 - 2_1
-        '''    
+
 
         self.getNameOrder(msg.name)
         self.order[0] = 0
@@ -55,6 +47,7 @@ class my_joint_state_publisher():
         q_3_2 = PyKDL.Rotation.Quaternion(msg.pose[self.order[7]].orientation.x, msg.pose[self.order[7]].orientation.y, msg.pose[self.order[7]].orientation.z, msg.pose[self.order[7]].orientation.w)
         q_3_3 = PyKDL.Rotation.Quaternion(msg.pose[self.order[8]].orientation.x, msg.pose[self.order[8]].orientation.y, msg.pose[self.order[8]].orientation.z, msg.pose[self.order[8]].orientation.w)
         
+        # self.joint_angles = [f1_1,f1_2,f1_3,f2_1,f2_2,f2_3,f3_2,f3_3]
         self.joint_angles[0] = (q_world*q_1_1.Inverse()).GetEulerZYX()[0]
         self.joint_angles[1] = (q_1_2.Inverse()*q_1_1).GetEulerZYX()[1]+0.2807829   # There is an initial offset of 0.2807829 rad
         self.joint_angles[2] = (q_1_3.Inverse()*q_1_2).GetEulerZYX()[1]  
