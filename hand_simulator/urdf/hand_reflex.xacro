@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand_model">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand_reflex_model">
 
  	<xacro:macro name="base_color">
  		<color rgba="0.1 0.1 0.1 1"/>
@@ -37,7 +37,7 @@
       <visual>
           <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
-            <cylinder length="0.7" radius="0.02"/>
+            <cylinder length="0.8" radius="0.02"/>
           </geometry>
           <material
             name="">

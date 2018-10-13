@@ -6,7 +6,7 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="model" default="$(find hand_simulator)/urdf/hand.xacro"/>
+  <arg name="model" default="$(find hand_simulator)/urdf/hand_O.xacro"/>
   <!-- <arg name="world" default="$(find hand_simulator)/worlds/hand.world"/> -->
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
@@ -25,14 +25,15 @@
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-z 0.0 -unpause -urdf -model my_world -param robot_description" respawn="false" output="screen" />
+        args="-z 0.0 -unpause -urdf -model hand -param robot_description" respawn="false" output="screen" />
 
-  <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/table.urdf -urdf -x 0 -z 0 -model table" />
+  <!-- <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/table.urdf -urdf -x 0 -z 0 -model table" /> -->
 
-  <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.185 -z 0.6 -model object" />
+  <!-- <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.185 -z 0.6 -model object" /> -->
 
-  <!-- Load custom joint_state_publisher -->
+  <!-- Load custom joint_state_publisher and object_state_publisher -->
   <node pkg="hand_simulator" type="my_joint_state_publisher.py" name="my_joint_state_publisher" output="screen"></node>
+  <node pkg="hand_simulator" type="object_state_publisher.py" name="object_state_publisher" output="screen"></node>
 
   <!-- ros_control hand launch file -->
   <!--include file="$(find hand_simulator)/launch/hand_control.launch" /-->

@@ -26,16 +26,16 @@ class object_state_publisher():
         object_orientation_pub = rospy.Publisher('/hand/obj_orientation', Float32MultiArray, queue_size=10)
 
         rate = rospy.Rate(100)
-        rate.sleep()
         while not rospy.is_shutdown():
 
-            object_pos = self.obj_pos - self.hand_pos # Position relative to the hands base link
-            obj_orientation = (self.R_hand*self.R_obj.Inverse()).GetEulerZYX() # Orientation relative to hand - I did not verify that this is correct
+            if self.R_obj != None and self.R_hand != None:
+                object_pos = self.obj_pos - self.hand_pos # Position relative to the hands base link
+                obj_orientation = (self.R_hand*self.R_obj.Inverse()).GetEulerZYX() # Orientation relative to hand - I did not verify that this is correct
 
-            self.msg.data = object_pos
-            object_position_pub.publish(self.msg)
-            self.msg.data = obj_orientation
-            object_orientation_pub.publish(self.msg)
+                self.msg.data = object_pos
+                object_position_pub.publish(self.msg)
+                self.msg.data = obj_orientation
+                object_orientation_pub.publish(self.msg)
 
             rate.sleep()
 
