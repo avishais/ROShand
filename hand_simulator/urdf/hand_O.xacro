@@ -32,83 +32,58 @@
 
   <link name="world"/>
 
-  <link name="base_link1">
-    <inertial>
-      <origin xyz="0.000000 0.000000 0.025400"/>
-      <mass value="10.0"/>
-      <inertia ixx="1000.0" ixy="0.0" ixz="0.0" iyy="1000.0" iyz="0.0" izz="1000.0"/>
-    </inertial>
-    <!-- <visual>
-      <material name="lightlue">
-        <color rgba="0. 0.3 1.0 1.0"/>
-      </material>
-      <origin rpy="0 1.57079632679 0" xyz="0.000000 0.000000 0.000000"/>
-      <geometry>
-        <box size = "0.098 0.113 0.00762"/>
-      </geometry>
-    </visual> -->
-    <collision>
-      <origin rpy="0 1.57079632679 0" xyz="0.000000 0.000000 0.000000"/>
-      <geometry>
-        <box size = "0.098 0.113 0.00762"/>
-      </geometry>
-    </collision>
-  </link>
-  <gazebo reference="base_link1">
-      <selfCollide>true</selfCollide>
-      <material>Gazebo/Black</material>
-    </gazebo>
-
-  <link name="base_link2">
-    <inertial>
-      <origin xyz="0.000000 0.000000 0.025400"/>
-      <mass value="10.0"/>
-      <inertia ixx="1000.0" ixy="0.0" ixz="0.0" iyy="1000.0" iyz="0.0" izz="1000.0"/>
-    </inertial>
-    <!-- <visual>
-      <material name="black">
-        <color rgba="0. 0. 0. 1.0"/>
-      </material>
-      <origin rpy="0 1.57079632679 0" xyz="0.000000 0.000000 0.000000"/>
-      <geometry>
-        <box size = "0.098 0.113 0.06"/>
-      </geometry>
-    </visual> -->
-    <collision>
-      <origin rpy="0 1.57079632679 0" xyz="0.000000 0.000000 0.000000"/>
-      <geometry>
-        <box size = "0.098 0.113 0.06"/>
-      </geometry>
-    </collision>
-  </link>
-  <gazebo reference="base_link2">
-      <selfCollide>true</selfCollide>
-      <material>Gazebo/Black</material>
+  <link name="rail">
+      <visual>
+          <origin rpy="0 0 0" xyz="0 0 0"/>
+          <geometry>
+            <cylinder length="0.8" radius="0.02"/>
+          </geometry>
+          <material
+            name="">
+            <xacro:base_color/>
+          </material>
+      </visual>
+      <inertial>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="0.1"/>
+          <inertia
+            ixx="0.0" ixy="0.0" ixz="0.0"
+            iyy="0.0" iyz="0.0"
+            izz="0.0"/>
+      </inertial>
+    </link>
+    <gazebo reference="rail">
+      <selfCollide>false</selfCollide>
+      <material>Gazebo/White</material>
     </gazebo>
 
   <link name="base_link">
-    <inertial>
-      <origin xyz="0.000000 0.000000 0.025400"/>
-      <mass value="10.0"/>
-      <inertia ixx="1000.0" ixy="0.0" ixz="0.0" iyy="1000.0" iyz="0.0" izz="1000.0"/>
-    </inertial>
-    <!-- <visual>
-      <material name="lightlue">
-        <color rgba="0. 0.3 1.0 1.0"/>
-      </material>
-      <origin rpy="0 1.57079632679 0" xyz="0.000000 0.000000 0.000000"/>
-      <geometry>
-        <box size = "0.098 0.128 0.003"/>
-      </geometry>
-    </visual> -->
-    <collision>
-      <origin rpy="0 1.57079632679 0" xyz="0.000000 0.000000 0.000000"/>
-      <geometry>
-        <box size = "0.098 0.128 0.003"/>
-      </geometry>
-    </collision>
-  </link> 
-  <gazebo reference="base_link">
+      <visual>
+          <origin rpy="1.57 0 -1.57" xyz="0.06 0.017 0"/>
+          <geometry>
+            <mesh filename="package://hand_simulator/meshes/base_link.STL"/>
+          </geometry>
+          <material
+            name="">
+            <xacro:base_color/>
+          </material>
+      </visual>
+      <inertial>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="0.1"/>
+          <inertia
+            ixx="0.0" ixy="0.0" ixz="0.0"
+            iyy="0.0" iyz="0.0"
+            izz="0.0"/>
+      </inertial>
+      <!-- <collision>
+        <origin rpy="1.57 0 -1.57" xyz="0.06 0.017 0"/>
+        <geometry>
+          <mesh filename="package://hand_simulator/meshes/base_link.STL"/>
+        </geometry>
+      </collision> -->
+    </link>
+    <gazebo reference="base_link">
       <selfCollide>true</selfCollide>
       <material>Gazebo/Black</material>
     </gazebo>
@@ -132,12 +107,12 @@
         <mesh filename="package://hand_simulator/meshes/swivel_1.STL"/>
       </geometry>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin rpy="0 1.57 0 " xyz="0.00 0.0 0.00" />
       <geometry>
         <cylinder length="0.002" radius="0.018" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <gazebo reference="finger_1_1">
       <selfCollide>true</selfCollide>
@@ -163,22 +138,25 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="1.5707 0 0" xyz="0.00 0.032 0.00" />
+      <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <box size="0.02400 0.018 0.08340" />
+        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
   <gazebo reference="finger_1_2">
-      <selfCollide>true</selfCollide>
+      <selfCollide>ture</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
 
   <link name="finger_1_3">
     <inertial>
-      <origin xyz="-0.015875 -0.009000 -0.071550" />
-      <mass value="1.0" />
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="0.1"/>
+          <inertia
+            ixx="0.0" ixy="0.0" ixz="0.0"
+            iyy="0.0" iyz="0.0"
+            izz="0.0"/>
     </inertial>
     <visual>
       <material name="white">
@@ -198,6 +176,10 @@
   </link>
   <gazebo reference="finger_1_3">
       <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -216,16 +198,15 @@
       </material>
       <origin rpy="1.57 3.14159 -1.57" xyz="-0.00 0.0 0.00" />
       <geometry>
-        <!-- <cylinder length="0.002" radius="0.018" /> -->
         <mesh filename="package://hand_simulator/meshes/swivel_1.STL"/>
       </geometry>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin rpy="0 1.57 0 " xyz="0.00 0.0 0.00" />
       <geometry>
         <cylinder length="0.002" radius="0.018" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <gazebo reference="finger_2_1">
       <selfCollide>true</selfCollide>
@@ -251,9 +232,9 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="1.5707 0 0" xyz="0.00 0.032 0.00" />
+      <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <box size="0.02400 0.018 0.08340" />
+        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
@@ -286,15 +267,21 @@
   </link>
   <gazebo reference="finger_2_3">
       <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
       <material>Gazebo/Red</material>
     </gazebo>
 
-<!--
   <link name="finger_3_2">
     <inertial>
-      <origin xyz="-0.015875 -0.009000 -0.071550" />
-      <mass value="1.0" />
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="0.1"/>
+          <inertia
+            ixx="0.0" ixy="0.0" ixz="0.0"
+            iyy="0.0" iyz="0.0"
+            izz="0.0"/>
     </inertial>
     <visual>
       <material name="white">
@@ -306,12 +293,16 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="1.5707 0 0" xyz="0.00 0.032 0.00" />
+      <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <box size="0.02400 0.018 0.08340" />
+        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
+  <gazebo reference="finger_3_2">
+      <selfCollide>false</selfCollide>
+      <material>Gazebo/Red</material>
+    </gazebo>
 
   <link name="finger_3_3">
     <inertial>
@@ -334,103 +325,120 @@
         <mesh filename="package://openhand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
-  </link> -->
+  </link> 
+  <gazebo reference="finger_3_3">
+      <selfCollide>true</selfCollide>
+      <mu1>${rubber_friction_coefficient}</mu1>
+      <mu2>${rubber_friction_coefficient}</mu2>
+      <kp>${rubber_contact_stiffness_coefficient}</kp>
+      <kd>${rubber_contact_damping_coefficient}</kd>
+      <material>Gazebo/Red</material>
+    </gazebo>-->
 
   <!-- Joints -->
 
-  <joint name="fixed1" type="fixed">
-    <origin rpy="-1.57 0 0" xyz="0 0.0000 0.000000"/>
-    <parent link="world"/>
-    <child link="base_link1"/>
+  <joint name="world_to_rail" type="fixed">
+      <parent link="world"/>
+      <child link="rail"/>
+      <origin
+        xyz="0.37 0 0.35"
+        rpy="0 0 0" />
   </joint>
 
-  <joint name="fixed2" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.03381 0.000000 0.000000"/>
-    <parent link="base_link1"/>
-    <child link="base_link2"/>
-  </joint>
-
-  <joint name="fixed3" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.0315 -0.0075 0.000000"/>
-    <parent link="base_link2"/>
+  <joint name="rail_to_base" type="prismatic">
+    <parent link="rail"/>
     <child link="base_link"/>
-  </joint> 
+    <limit effort="1000.0" lower="-100." upper="100." velocity="0.5"/>
+    <origin
+      xyz="-0.06 0 0.23"
+      rpy="-1.57 0 0" />
+  </joint>
 
-  <joint name="base_to_finger_1_1" type="revolute">
+ <joint name="base_to_finger_1_1" type="revolute">
    <origin rpy="3.14159 0 0" xyz="-0.003 -0.034 -0.027" />
    <parent link="base_link" />
    <child link="finger_1_1" />
-   <limit effort="10000" lower="-1.570" upper="0" velocity="200" />
+   <limit effort="1000" lower="0" upper="1.57" velocity="0.5" />
    <axis xyz="1 0 0" />
-   <dynamics damping="160" friction="0.0" />
+   <dynamics damping="5" friction="0.0" />
  </joint>
 
  <joint name="finger_1_1_to_finger_1_2" type="revolute">
    <origin rpy="0 0 0" xyz="-0.02 0 0" />
    <parent link="finger_1_1" />
    <child link="finger_1_2" />
-   <limit effort="10000" lower="0.0" upper="3.0" velocity="200" />
+   <limit effort="1000.0" lower="-0.1" upper="3.0" velocity="0.5"/>
    <axis xyz="0 0 1" />
-   <dynamics damping="160" friction="0.0" />
+   <dynamics damping="5" friction="0.0" />
  </joint>
 
  <joint name="finger_1_2_to_finger_1_3" type="revolute">
    <origin rpy="0 0 0" xyz="0.000800 0.062 0" />
    <parent link="finger_1_2" />
    <child link="finger_1_3" />
-   <limit effort="10000" lower="0.0" upper="1.24" velocity="200" />
+   <limit effort="1000.0" lower="0.0" upper="1.57" velocity="0.5"/>
    <axis xyz="0 0 1" />
-   <dynamics damping="300" friction="0.0" />
+   <dynamics damping="5" friction="0.0" />
   </joint>
 
   <joint name="base_to_finger_2_1" type="revolute">
     <origin rpy="3.14159 0 0" xyz="-0.003 -0.034 0.027" />
     <parent link="base_link" />
     <child link="finger_2_1" />
-    <limit effort="10000" lower="0" upper="1.57" velocity="200" />
+    <limit effort="1000" lower="-1.57" upper="0" velocity="200" />
     <axis xyz="1 0 0" />
-    <dynamics damping="160" friction="0.0" />
+    <dynamics damping="5" friction="0.0" />
   </joint>
 
   <joint name="finger_2_1_to_finger_2_2" type="revolute">
     <origin rpy="0 0 0" xyz="-0.02 0 0" />
     <parent link="finger_2_1" />
     <child link="finger_2_2" />
-    <limit effort="10000" lower="0.0" upper="3.0" velocity="200" />
+    <limit effort="10000" lower="-0.1" upper="3.0" velocity="200" />
     <axis xyz="0 0 1" />
-    <dynamics damping="160" friction="0.0" />
+    <dynamics damping="5" friction="0.0" />
   </joint>
 
   <joint name="finger_2_2_to_finger_2_3" type="revolute">
     <origin rpy="0 0 0" xyz="0.000800 0.062 0" />
     <parent link="finger_2_2" />
     <child link="finger_2_3" />
-    <limit effort="10000" lower="0.0" upper="1.24" velocity="200" />
+    <limit effort="10000" lower="0.0" upper="1.57" velocity="200" />
     <axis xyz="0 0 1" />
-    <dynamics damping="300" friction="0.0" />
+    <dynamics damping="5" friction="0.0" />
   </joint>
-<!--
 
   <joint name="base_to_finger_3_2" type="revolute">
     <origin rpy="0 0 0" xyz="-0.023 0.034 0.000000" />
     <parent link="base_link" />
     <child link="finger_3_2" />
-    <limit effort="10000" lower="0.0" upper="3.0" velocity="200" />
+    <limit effort="1000" lower="-0.1" upper="3.0" velocity="200" />
     <axis xyz="0 0 1" />
-    <dynamics damping="160" friction="0.0" />
+    <dynamics damping="5" friction="0.0" />
   </joint>
 
   <joint name="finger_3_2_to_finger_3_3" type="revolute">
     <origin rpy="0 0 0" xyz="0.000800 0.062 0" />
     <parent link="finger_3_2" />
     <child link="finger_3_3" />
-    <limit effort="10000" lower="0.0" upper="1.24" velocity="200" />
+    <limit effort="10000" lower="0.0" upper="1.57" velocity="200" />
     <axis xyz="0 0 1" />
-    <dynamics damping="300" friction="0.0" />
-  </joint> -->
+    <dynamics damping="5" friction="0.0" />
+  </joint>
 
  <!-- Transmissions -->
-<!--  
+
+
+  <transmission name="lift" type="SimpleTransmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="$lift_motor">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+      <joint name="rail_to_base">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+  </transmission>
+
   <transmission name="finger1_1_trans" type="SimpleTransmission">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="$finger11_motor">
@@ -509,12 +517,12 @@
       <joint name="finger_3_2_to_finger_3_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
-  </transmission> -->
+  </transmission> 
   
-    <!-- <gazebo>
+    <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
           <robotNamespace>/hand</robotNamespace>
       </plugin>
-    </gazebo> -->
+    </gazebo>
 
 </robot>

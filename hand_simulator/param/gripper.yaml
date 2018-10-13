@@ -1,4 +1,4 @@
-gripper_type: 'model_T42'
+gripper_type: 'model_O'
 proximal_finger_spring_coefficient: 5
 distal_finger_spring_coefficient: 10
 tendon_max_force: 300

@@ -335,10 +335,6 @@
     </link>
     <gazebo reference="finger_3_2">
       <selfCollide>true</selfCollide>
-      <mu1>${rubber_friction_coefficient}</mu1>
-      <mu2>${rubber_friction_coefficient}</mu2>
-      <kp>${rubber_contact_stiffness_coefficient}</kp>
-      <kd>${rubber_contact_damping_coefficient}</kd>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -383,14 +379,6 @@
 
     
     <!-- Joints -->
-
-    <!-- <joint name="world_to_base" type="fixed">
-      <parent link="world"/>
-      <child link="base_link"/>
-      <origin
-        xyz="0.37 0 0.5"
-        rpy="0 -1.57 0" />
-    </joint> -->
 
     <joint name="world_to_rail" type="fixed">
       <parent link="world"/>
