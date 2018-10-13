@@ -23,6 +23,8 @@ class SimHandNode():
 
         if rospy.has_param('~gripper_type'):
             Gtype = rospy.get_param('~gripper_type')
+            if Gtype=='reflex':
+                self.num_fingers = 2
             if Gtype=='model_T42':
                 self.num_fingers = 2
             if Gtype=='model_O':
@@ -32,8 +34,6 @@ class SimHandNode():
             max_f = rospy.get_param('~tendon_max_force') # max tendon force
             h = rospy.get_param('~finger_tendon_force_distribution') # Tendon force distribution on the finger
             self.lift_values = rospy.get_param('~lift_values')
-
-        print(self.lift_values)
 
         self.Q = np.array([[max_f, 0., 0.],[0., max_f, 0.],[0., 0., max_f]])
         self.R = np.array([[h[0],0.,0.],[h[1],0.,0.],[0.,h[0],0.],[0.,h[1],0.],[0.,0.,h[0]],[0.,0.,h[1]]])

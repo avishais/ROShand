@@ -3,8 +3,6 @@
 import rospy
 import numpy as np 
 from std_msgs.msg import Float64, Float32MultiArray
-# from rospy.numpy_msg import numpy_msg
-# from rospy_tutorials.msg import Floats
 from gazebo_msgs.msg import LinkStates
 import PyKDL
 
