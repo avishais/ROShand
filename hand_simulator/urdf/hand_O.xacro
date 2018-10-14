@@ -300,7 +300,7 @@
     </collision>
   </link>
   <gazebo reference="finger_3_2">
-      <selfCollide>false</selfCollide>
+      <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -348,17 +348,19 @@
   <joint name="rail_to_base" type="prismatic">
     <parent link="rail"/>
     <child link="base_link"/>
-    <limit effort="1000.0" lower="-100." upper="100." velocity="0.5"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" lower="-100." upper="100." velocity="10"/>
     <origin
-      xyz="-0.06 0 0.23"
+      xyz="-0.06 0 -0.19"
       rpy="-1.57 0 0" />
+    <dynamics damping="10"/>
   </joint>
 
  <joint name="base_to_finger_1_1" type="revolute">
    <origin rpy="3.14159 0 0" xyz="-0.003 -0.034 -0.027" />
    <parent link="base_link" />
    <child link="finger_1_1" />
-   <limit effort="1000" lower="0" upper="1.57" velocity="0.5" />
+   <limit effort="1000" lower="0" upper="1.57" velocity="100" />
    <axis xyz="1 0 0" />
    <dynamics damping="5" friction="0.0" />
  </joint>
@@ -367,7 +369,7 @@
    <origin rpy="0 0 0" xyz="-0.02 0 0" />
    <parent link="finger_1_1" />
    <child link="finger_1_2" />
-   <limit effort="1000.0" lower="-0.1" upper="3.0" velocity="0.5"/>
+   <limit effort="1000.0" lower="-0.1" upper="3.0" velocity="10"/>
    <axis xyz="0 0 1" />
    <dynamics damping="5" friction="0.0" />
  </joint>
@@ -376,7 +378,7 @@
    <origin rpy="0 0 0" xyz="0.000800 0.062 0" />
    <parent link="finger_1_2" />
    <child link="finger_1_3" />
-   <limit effort="1000.0" lower="0.0" upper="1.57" velocity="0.5"/>
+   <limit effort="1000.0" lower="0.0" upper="1.27" velocity="10"/>
    <axis xyz="0 0 1" />
    <dynamics damping="5" friction="0.0" />
   </joint>
@@ -385,7 +387,7 @@
     <origin rpy="3.14159 0 0" xyz="-0.003 -0.034 0.027" />
     <parent link="base_link" />
     <child link="finger_2_1" />
-    <limit effort="1000" lower="-1.57" upper="0" velocity="200" />
+    <limit effort="1000" lower="-1.57" upper="0" velocity="100" />
     <axis xyz="1 0 0" />
     <dynamics damping="5" friction="0.0" />
   </joint>
@@ -394,7 +396,7 @@
     <origin rpy="0 0 0" xyz="-0.02 0 0" />
     <parent link="finger_2_1" />
     <child link="finger_2_2" />
-    <limit effort="10000" lower="-0.1" upper="3.0" velocity="200" />
+    <limit effort="1000" lower="-0.1" upper="3.0" velocity="10" />
     <axis xyz="0 0 1" />
     <dynamics damping="5" friction="0.0" />
   </joint>
@@ -403,7 +405,7 @@
     <origin rpy="0 0 0" xyz="0.000800 0.062 0" />
     <parent link="finger_2_2" />
     <child link="finger_2_3" />
-    <limit effort="10000" lower="0.0" upper="1.57" velocity="200" />
+    <limit effort="1000" lower="0.0" upper="1.27" velocity="10" />
     <axis xyz="0 0 1" />
     <dynamics damping="5" friction="0.0" />
   </joint>
@@ -412,7 +414,7 @@
     <origin rpy="0 0 0" xyz="-0.023 0.034 0.000000" />
     <parent link="base_link" />
     <child link="finger_3_2" />
-    <limit effort="1000" lower="-0.1" upper="3.0" velocity="200" />
+    <limit effort="1000" lower="-0.1" upper="3.0" velocity="10" />
     <axis xyz="0 0 1" />
     <dynamics damping="5" friction="0.0" />
   </joint>
@@ -421,7 +423,7 @@
     <origin rpy="0 0 0" xyz="0.000800 0.062 0" />
     <parent link="finger_3_2" />
     <child link="finger_3_3" />
-    <limit effort="10000" lower="0.0" upper="1.57" velocity="200" />
+    <limit effort="1000" lower="0.0" upper="1.27" velocity="10" />
     <axis xyz="0 0 1" />
     <dynamics damping="5" friction="0.0" />
   </joint>
@@ -456,6 +458,7 @@
       </actuator>
       <joint name="finger_1_1_to_finger_1_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -466,6 +469,7 @@
       </actuator>
       <joint name="finger_1_2_to_finger_1_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -486,6 +490,7 @@
       </actuator>
       <joint name="finger_2_1_to_finger_2_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -496,6 +501,7 @@
       </actuator>
       <joint name="finger_2_2_to_finger_2_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -506,6 +512,7 @@
       </actuator>
       <joint name="base_to_finger_3_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -516,6 +523,7 @@
       </actuator>
       <joint name="finger_3_2_to_finger_3_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission> 
   
