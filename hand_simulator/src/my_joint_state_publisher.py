@@ -59,7 +59,7 @@ class my_joint_state_publisher():
             self.joint_angles[6] = -((q_3_2.Inverse()).GetEulerZYX()[1]-np.pi/2)+0.2807829   # There is an initial offset of 0.2807829 rad
             self.joint_angles[7] = (q_3_3.Inverse()*q_3_2).GetEulerZYX()[1]
 
-        if self.Gtype == 'model_T42':
+        if self.Gtype == 'model_O':
             # self.joint_angles = [f1_1,f1_2,f1_3,f2_1,f2_2,f2_3,f3_2,f3_3]
             self.joint_angles[0] = -(q_world*q_1_1.Inverse()).GetEulerZYX()[2]-np.pi/2
             self.joint_angles[1] = -(q_1_2.Inverse()*q_1_1).GetEulerZYX()[0]

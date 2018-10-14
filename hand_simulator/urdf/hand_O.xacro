@@ -349,9 +349,9 @@
     <parent link="rail"/>
     <child link="base_link"/>
     <axis xyz="0 1 0"/>
-    <limit effort="1000.0" lower="-100." upper="100." velocity="10"/>
+    <limit effort="1000.0" lower="-100." upper="100." velocity="4"/>
     <origin
-      xyz="-0.06 0 -0.19"
+      xyz="-0.06 0 0.42"
       rpy="-1.57 0 0" />
     <dynamics damping="10"/>
   </joint>

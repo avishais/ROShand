@@ -27,9 +27,9 @@ class SimHandNode():
             if Gtype=='reflex':
                 self.num_fingers = 2
             if Gtype=='model_T42':
-                self.num_fingers = 3
+                self.num_fingers = 2
             if Gtype=='model_O':
-                self.num_fingers = 3
+                self.num_fingers = 2
             k1 = rospy.get_param('~' + Gtype + '/proximal_finger_spring_coefficient')
             k2 = rospy.get_param('~' + Gtype + '/distal_finger_spring_coefficient')
             max_f = rospy.get_param('~' + Gtype + '/tendon_max_force') # max tendon force
@@ -100,6 +100,9 @@ class SimHandNode():
         self.fingers_angles = self.fingers_angles[:2*self.num_fingers]
 
     def MoveServosProxy(self,req):
+        if (len(req.pos) < self.num_fingers):
+            rospy.logerr("[hand_node] Command is not compatible with the number (%d) of fingers." % self.num_fingers)
+            return 1
         self.act_angles = np.array(req.pos[:self.num_fingers])
 
         # Enforce normalized actuator angles
