@@ -29,7 +29,7 @@ class SimHandNode():
             if Gtype=='model_T42':
                 self.num_fingers = 2
             if Gtype=='model_O':
-                self.num_fingers = 2
+                self.num_fingers = 3
             k1 = rospy.get_param('~' + Gtype + '/proximal_finger_spring_coefficient')
             k2 = rospy.get_param('~' + Gtype + '/distal_finger_spring_coefficient')
             max_f = rospy.get_param('~' + Gtype + '/tendon_max_force') # max tendon force
