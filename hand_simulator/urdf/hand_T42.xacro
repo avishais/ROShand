@@ -94,7 +94,7 @@
             <material name="white">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
-            <origin rpy="0 1.57 1.57" xyz="-0.016510 -${swivel_distance} 0" />
+            <origin rpy="0 1.57 1.57" xyz="-0.016510 ${swivel_distance} 0" />
             <geometry>
                 <mesh filename="package://hand_simulator/meshes/swivel_t42.STL" scale="0.001 0.001 0.001" />
             </geometry>
@@ -103,7 +103,7 @@
     <gazebo reference="swivel_1">
       <material>Gazebo/Red</material>
     </gazebo>
-    
+
     <link name="finger_1_1">
         <inertial>
             <origin xyz="-0.015875 -0.009000 -0.071550" />
@@ -130,7 +130,7 @@
       <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
-
+    
     <link name="finger_1_2">
         <inertial>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
@@ -138,8 +138,8 @@
             <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
         </inertial>
         <visual>
-            <material name="orange">
-                <color rgba="0.9 0.3 0.1 1.0" />
+            <material name="green">
+                <color rgba="0.1 1.0 0.1 1.0" />
             </material>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
             <geometry>
@@ -167,7 +167,7 @@
             <material name="white">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
-            <origin rpy="0 1.57 1.57" xyz="-0.016510 ${swivel_distance} 0" />
+            <origin rpy="0 1.57 1.57" xyz="-0.016510 -${swivel_distance} 0" />
             <geometry>
                 <mesh filename="package://hand_simulator/meshes/swivel_t42.STL" scale="0.001 0.001 0.001" />
             </geometry>
@@ -176,7 +176,7 @@
     <gazebo reference="swivel_2">
       <material>Gazebo/Red</material>
     </gazebo>
-
+    
     <link name="finger_2_1">
         <inertial>
             <origin xyz="-0.015875 -0.009000 -0.071550" />
@@ -203,7 +203,7 @@
       <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
-    
+
     <link name="finger_2_2">
         <inertial>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
@@ -211,8 +211,8 @@
             <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
         </inertial>
         <visual>
-            <material name="green">
-                <color rgba="0.1 1.0 0.1 1.0" />
+            <material name="orange">
+                <color rgba="0.9 0.3 0.1 1.0" />
             </material>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
             <geometry>
@@ -235,6 +235,59 @@
       <material>Gazebo/Red</material>
     </gazebo>
 
+    <!-- Camera -->
+    <xacro:property name="camera_size" value="0.1" /> <!-- Size of square 'camera' box -->
+    <link name="camera_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${camera_size} ${camera_size} ${camera_size}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+    </link>
+    <gazebo reference="camera_link">
+        <material>Gazebo/Black</material>
+        <sensor type="camera" name="camera">
+            <update_rate>30.0</update_rate>
+            <camera name="head">
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                <width>800</width>
+                <height>800</height>
+                <format>R8G8B8</format>
+                </image>
+                <clip>
+                <near>0.02</near>
+                <far>300</far>
+                </clip>
+                <noise>
+                <type>gaussian</type>
+                <!-- Noise is sampled independently per pixel on each frame.
+                    That pixel's noise value is added to each of its color
+                    channels, which at that point lie in the range [0,1]. -->
+                <mean>0.0</mean>
+                <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>0.0</updateRate>
+                <cameraName>hand/camera</cameraName>
+                <imageTopicName>image_raw</imageTopicName>
+                <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                <frameName>camera_link</frameName>
+                <hackBaseline>0.07</hackBaseline>
+                <distortionK1>0.0</distortionK1>
+                <distortionK2>0.0</distortionK2>
+                <distortionK3>0.0</distortionK3>
+                <distortionT1>0.0</distortionT1>
+                <distortionT2>0.0</distortionT2>
+            </plugin>
+        </sensor>
+    </gazebo>
+    
+
 
 
   <!-- Joints -->
@@ -242,9 +295,19 @@
     <joint name="world_to_rail" type="fixed">
         <parent link="world"/>
         <child link="rail"/>
+      <selfCollide>false</selfCollide>
         <origin
           xyz="0.37 0 0.4"
           rpy="0 0 0" />
+    </joint>
+
+    <joint name="rail_to_camera" type="fixed">
+        <parent link="rail"/>
+        <child link="camera_link"/>
+        <axis xyz="0 0 -1" />
+        <origin
+          xyz="-0.2 0 0.7"
+          rpy="0 1.57 3.14" />
     </joint>
 
     <joint name="rail_to_base" type="prismatic">
@@ -253,7 +316,7 @@
         <child link="base_link" />
         <axis xyz="0 0 1"/>
         <limit effort="1000.0" lower="-100." upper="100." velocity="1"/>
-    </joint>
+    </joint>  
 
     <joint name="base_link_to_swivel_1" type="fixed">
         <origin rpy="0 0 0" xyz="0 0.000000 0.000000" />
@@ -262,14 +325,14 @@
     </joint>
 
     <joint name="base_to_finger_1_1" type="revolute">
-        <origin rpy="1.57079632679 -1.57079632679 0" xyz="-0.016510 ${swivel_distance} 0.0000" />
+        <origin rpy="-1.57079632679 1.57079632679 0" xyz="-0.016510 -${swivel_distance} 0.000000" />
         <parent link="base_link" />
         <child link="finger_1_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
         <dynamics damping="5" friction="0.0" />
     </joint>
-
+    
     <joint name="finger_1_1_to_finger_1_2" type="revolute">
         <origin rpy="0 0 0" xyz="0.000000 0.000000 -0.062551" />
         <parent link="finger_1_1" />
@@ -286,14 +349,14 @@
     </joint>
 
     <joint name="base_to_finger_2_1" type="revolute">
-        <origin rpy="-1.57079632679 1.57079632679 0" xyz="-0.016510 -${swivel_distance} 0.000000" />
+        <origin rpy="1.57079632679 -1.57079632679 0" xyz="-0.016510 ${swivel_distance} 0.0000" />
         <parent link="base_link" />
         <child link="finger_2_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
         <dynamics damping="5" friction="0.0" />
     </joint>
-    
+
     <joint name="finger_2_1_to_finger_2_2" type="revolute">
         <origin rpy="0 0 0" xyz="0.000000 0.000000 -0.062551" />
         <parent link="finger_2_1" />
