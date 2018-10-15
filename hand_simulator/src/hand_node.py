@@ -1,13 +1,20 @@
 #!/usr/bin/python 
 
+'''
+----------------------------
+Author: Avishai Sintov
+        Rutgers University
+Date: October 2018
+----------------------------
+'''
+
+
 import rospy
 import numpy as np 
 from std_msgs.msg import Float64
 from hand_simulator.srv import MoveServos
 from std_msgs.msg import Float64MultiArray, Float32MultiArray
 from std_srvs.srv import Empty, EmptyResponse
-
-
 
 class SimHandNode():
 

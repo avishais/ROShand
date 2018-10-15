@@ -1,12 +1,19 @@
 #!/usr/bin/python 
 
+'''
+----------------------------
+Author: Avishai Sintov
+        Rutgers University
+Date: October 2018
+----------------------------
+'''
+
+
 import rospy
 import numpy as np 
 from std_msgs.msg import Float64, Float32MultiArray
 from gazebo_msgs.msg import LinkStates
 import PyKDL
-
-
 
 class my_joint_state_publisher():
 
