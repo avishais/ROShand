@@ -18,9 +18,8 @@ class my_joint_state_publisher():
     def __init__(self):
         rospy.init_node('my_joint_state_publisher', anonymous=True)
 
-        # if rospy.has_param('~gripper/gripper_type'):
-            # self.Gtype = rospy.get_param('~gripper/gripper_type')
-        self.Gtype = 'model_T42'
+        if rospy.has_param('~gripper/gripper_type'):
+            self.Gtype = rospy.get_param('~gripper/gripper_type')
 
         if self.Gtype == 'reflex' or self.Gtype == 'model_O':
             self.joint_angles = [0.,0.,0.,0.,0.,0.,0.,0.]
@@ -41,7 +40,6 @@ class my_joint_state_publisher():
     def linkStatesCallback(self, msg):
 
         self.getNameOrder(msg.name)
-        self.order[0] = 0
 
         q_world = PyKDL.Rotation.Quaternion(msg.pose[0].orientation.x, msg.pose[0].orientation.y, msg.pose[0].orientation.z, msg.pose[0].orientation.w)
         q_base = PyKDL.Rotation.Quaternion(msg.pose[self.order[0]].orientation.x, msg.pose[self.order[0]].orientation.y, msg.pose[self.order[0]].orientation.z, msg.pose[self.order[0]].orientation.w)
@@ -63,24 +61,36 @@ class my_joint_state_publisher():
         
         if self.Gtype == 'reflex':
             # self.joint_angles = [f1_1,f1_2,f1_3,f2_1,f2_2,f2_3,f3_2,f3_3]
-            self.joint_angles[0] = (q_world*q_1_1.Inverse()).GetEulerZYX()[0]
-            self.joint_angles[1] = (q_1_2.Inverse()*q_1_1).GetEulerZYX()[1]+0.2807829   # There is an initial offset of 0.2807829 rad
+            self.joint_angles[0] = (q_1_1.Inverse()*q_base).GetEulerZYX()[0]
+            a = q_1_1.UnitZ()*q_1_2.UnitX()
+            if a[1] > 0:
+                self.joint_angles[1] = np.pi/2-np.arccos(PyKDL.dot(q_1_1.UnitZ(), q_1_2.UnitX()))+0.2807829
+            else:
+                self.joint_angles[1] = np.pi/2+np.arccos(PyKDL.dot(q_1_1.UnitZ(), q_1_2.UnitX()))+0.2807829
             self.joint_angles[2] = (q_1_3.Inverse()*q_1_2).GetEulerZYX()[1]  
-            self.joint_angles[3] = (q_world*q_2_1.Inverse()).GetEulerZYX()[0]
-            self.joint_angles[4] = (q_2_2.Inverse()*q_2_1).GetEulerZYX()[1]+0.2807829   # There is an initial offset of 0.2807829 rad
+            self.joint_angles[3] = (q_2_1.Inverse()*q_base).GetEulerZYX()[0]
+            a = q_2_1.UnitZ()*q_2_2.UnitX() 
+            if a[1] > 0:
+                self.joint_angles[4] = np.pi/2-np.arccos(PyKDL.dot(q_2_1.UnitZ(), q_2_2.UnitX()))+0.2807829
+            else:
+                self.joint_angles[4] = np.pi/2+np.arccos(PyKDL.dot(q_2_1.UnitZ(), q_2_2.UnitX()))+0.2807829
             self.joint_angles[5] = (q_2_3.Inverse()*q_2_2).GetEulerZYX()[1] 
-            self.joint_angles[6] = -((q_world*q_3_2.Inverse()).GetEulerZYX()[1]-np.pi/2)+0.2807829   # There is an initial offset of 0.2807829 rad
+            a = q_base.UnitZ()*q_3_2.UnitX()
+            if a[1] < 0:
+                self.joint_angles[6] = np.pi/2-np.arccos(PyKDL.dot(q_base.UnitZ(), q_3_2.UnitX()))+0.2807829
+            else:
+                self.joint_angles[6] = np.pi/2+np.arccos(PyKDL.dot(q_base.UnitZ(), q_3_2.UnitX()))+0.2807829
             self.joint_angles[7] = (q_3_3.Inverse()*q_3_2).GetEulerZYX()[1]
 
         if self.Gtype == 'model_O':
             # self.joint_angles = [f1_1,f1_2,f1_3,f2_1,f2_2,f2_3,f3_2,f3_3]
-            self.joint_angles[0] = -(q_world*q_1_1.Inverse()).GetEulerZYX()[2]-np.pi/2
+            self.joint_angles[0] = np.mod(np.pi-(q_1_1.Inverse()*q_base).GetEulerZYX()[2], np.pi)
             self.joint_angles[1] = -(q_1_2.Inverse()*q_1_1).GetEulerZYX()[0]
             self.joint_angles[2] = -(q_1_3.Inverse()*q_1_2).GetEulerZYX()[0]
-            self.joint_angles[3] = -(q_world*q_2_1.Inverse()).GetEulerZYX()[2]-np.pi/2
+            self.joint_angles[3] = np.pi+(q_2_1.Inverse()*q_base).GetEulerZYX()[2] # Changes sign based on the rotation of the base - not currently important
             self.joint_angles[4] = -(q_2_2.Inverse()*q_2_1).GetEulerZYX()[0]
             self.joint_angles[5] = -(q_2_3.Inverse()*q_2_2).GetEulerZYX()[0] 
-            self.joint_angles[6] = -(q_world*q_3_2.Inverse()).GetEulerZYX()[0]
+            self.joint_angles[6] = -(q_3_2.Inverse()*q_base).GetEulerZYX()[0]
             self.joint_angles[7] = -(q_3_3.Inverse()*q_3_2).GetEulerZYX()[0]
 
         if self.Gtype == 'model_T42':
@@ -96,7 +106,6 @@ class my_joint_state_publisher():
             else:
                 self.joint_angles[2] = np.pi+a[1]
             self.joint_angles[3] = -(q_2_2.Inverse()*q_2_1).GetEulerZYX()[2]
-
 
     def getNameOrder(self, names):
 

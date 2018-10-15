@@ -97,8 +97,11 @@ class SimHandNode():
     def JointStatesCallback(self, msg):
         angles = np.array(msg.data)
 
-        self.fingers_angles = angles[[1,2,4,5,6,7]].reshape(6,1)
-        self.fingers_angles = self.fingers_angles[:2*self.num_fingers]
+        if self.num_fingers == 3:
+            self.fingers_angles = angles[[1,2,4,5,6,7]].reshape(6,1)
+            self.fingers_angles = self.fingers_angles[:2*self.num_fingers]
+        else:
+            self.fingers_angles = angles.reshape(4,1)
 
     def MoveServosProxy(self,req):
         if (len(req.pos) < self.num_fingers):

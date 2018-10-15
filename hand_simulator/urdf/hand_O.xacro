@@ -59,7 +59,7 @@
 
   <link name="base_link">
       <visual>
-          <origin rpy="1.57 0 -1.57" xyz="0 0 0"/>
+          <origin rpy="1.57 0 -1.57" xyz="0.06 0.017 0"/>
           <geometry>
             <mesh filename="package://hand_simulator/meshes/base_link.STL"/>
           </geometry>
@@ -145,7 +145,7 @@
     </collision>
   </link>
   <gazebo reference="finger_1_2">
-      <selfCollide>ture</selfCollide>
+      <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -360,7 +360,7 @@
    <origin rpy="3.14159 0 0" xyz="-0.003 -0.034 -0.027" />
    <parent link="base_link" />
    <child link="finger_1_1" />
-   <limit effort="1000" lower="0" upper="1.57" velocity="100" />
+   <limit effort="1000" lower="0" upper="1.57" velocity="200" />
    <axis xyz="1 0 0" />
    <dynamics damping="5" friction="0.0" />
  </joint>
@@ -387,7 +387,7 @@
     <origin rpy="3.14159 0 0" xyz="-0.003 -0.034 0.027" />
     <parent link="base_link" />
     <child link="finger_2_1" />
-    <limit effort="1000" lower="-1.57" upper="0" velocity="100" />
+    <limit effort="1000" lower="-1.57" upper="0" velocity="200" />
     <axis xyz="1 0 0" />
     <dynamics damping="5" friction="0.0" />
   </joint>
@@ -428,8 +428,8 @@
     <dynamics damping="5" friction="0.0" />
   </joint>
 
- <!-- Transmissions -->
 
+ <!-- Transmissions -->
 
   <transmission name="lift" type="SimpleTransmission">
       <type>transmission_interface/SimpleTransmission</type>
@@ -458,7 +458,6 @@
       </actuator>
       <joint name="finger_1_1_to_finger_1_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -469,7 +468,6 @@
       </actuator>
       <joint name="finger_1_2_to_finger_1_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -490,7 +488,6 @@
       </actuator>
       <joint name="finger_2_1_to_finger_2_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -501,7 +498,6 @@
       </actuator>
       <joint name="finger_2_2_to_finger_2_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -512,7 +508,6 @@
       </actuator>
       <joint name="base_to_finger_3_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission>
 
@@ -523,7 +518,6 @@
       </actuator>
       <joint name="finger_3_2_to_finger_3_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-          <!-- <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface> -->
       </joint>
   </transmission> 
   
