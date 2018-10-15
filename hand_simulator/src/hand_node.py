@@ -20,12 +20,11 @@ class SimHandNode():
     
     def __init__(self):
         rospy.init_node('SimHandNode', anonymous=True)
-        print rospy.has_param('~gripper/gripper_type')
 
         if rospy.has_param('~gripper/gripper_type'):
             Gtype = rospy.get_param('~gripper/gripper_type')
             if Gtype=='reflex':
-                self.num_fingers = 2
+                self.num_fingers = 3
             if Gtype=='model_T42':
                 self.num_fingers = 2
             if Gtype=='model_O':
@@ -68,28 +67,30 @@ class SimHandNode():
 
         rate = rospy.Rate(100)
         while not rospy.is_shutdown():
-            if self.num_fingers == 2:
-                self.pub_f3_jb2.publish(0.)
-                self.pub_f3_j23.publish(0.)
-                self.pub_f1_jb1.publish(np.pi/2)
-                self.pub_f2_jb1.publish(-np.pi/2)
 
             tendon_forces = self.Q.dot( self.act_angles.reshape(self.num_fingers,1) )
             self.act_torque = self.R.dot( tendon_forces ) - self.K.dot( self.fingers_angles - self.ref_angles )
 
-            self.pub_f1_j12.publish(self.act_torque[0])
-            self.pub_f1_j23.publish(self.act_torque[1])
-            self.pub_f2_j12.publish(self.act_torque[2])
-            self.pub_f2_j23.publish(self.act_torque[3])
-            if self.num_fingers > 2:
+            if self.num_fingers == 3:
+                self.pub_f1_j12.publish(self.act_torque[0])
+                self.pub_f1_j23.publish(self.act_torque[1])
+                self.pub_f2_j12.publish(self.act_torque[2])
+                self.pub_f2_j23.publish(self.act_torque[3])
                 self.pub_f3_jb2.publish(self.act_torque[4])
                 self.pub_f3_j23.publish(self.act_torque[5])
-            self.pub_lift.publish(self.lift_values[int(self.lift_flag==True)])
+
+            if self.num_fingers == 2:
+                self.pub_f1_jb1.publish(self.act_torque[0])
+                self.pub_f1_j12.publish(self.act_torque[1])
+                self.pub_f2_jb1.publish(self.act_torque[2])
+                self.pub_f2_j12.publish(self.act_torque[3])
             
             msg.data = self.act_angles
             self.gripper_angles_pub.publish(msg)
             msg.data = tendon_forces
             self.gripper_load_pub.publish(msg)
+
+            self.pub_lift.publish(self.lift_values[int(self.lift_flag==True)])
 
             rate.sleep()
 

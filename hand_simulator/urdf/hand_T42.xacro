@@ -104,7 +104,7 @@
       <material>Gazebo/Red</material>
     </gazebo>
     
-    <link name="finger_1_2">
+    <link name="finger_1_1">
         <inertial>
             <origin xyz="-0.015875 -0.009000 -0.071550" />
             <mass value="0.1" />
@@ -126,12 +126,12 @@
             </geometry>
         </collision> -->
     </link>
-    <gazebo reference="finger_1_2">
-      <selfCollide>ture</selfCollide>
+    <gazebo reference="finger_1_1">
+      <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
 
-    <link name="finger_1_3">
+    <link name="finger_1_2">
         <inertial>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
             <mass value="0.1" />
@@ -153,7 +153,7 @@
             </geometry>
         </collision> -->
     </link>
-    <gazebo reference="finger_1_3">
+    <gazebo reference="finger_1_2">
       <selfCollide>true</selfCollide>
       <mu1>${rubber_friction_coefficient}</mu1>
       <mu2>${rubber_friction_coefficient}</mu2>
@@ -177,7 +177,7 @@
       <material>Gazebo/Red</material>
     </gazebo>
 
-    <link name="finger_2_2">
+    <link name="finger_2_1">
         <inertial>
             <origin xyz="-0.015875 -0.009000 -0.071550" />
             <mass value="0.1" />
@@ -199,12 +199,12 @@
             </geometry>
         </collision> -->
     </link>
-    <gazebo reference="finger_2_2">
+    <gazebo reference="finger_2_1">
       <selfCollide>true</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
     
-    <link name="finger_2_3">
+    <link name="finger_2_2">
         <inertial>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
             <mass value="0.1" />
@@ -226,7 +226,7 @@
             </geometry>
         </collision> -->
     </link>
-    <gazebo reference="finger_2_3">
+    <gazebo reference="finger_2_2">
       <selfCollide>true</selfCollide>
       <mu1>${rubber_friction_coefficient}</mu1>
       <mu2>${rubber_friction_coefficient}</mu2>
@@ -261,20 +261,20 @@
         <child link="swivel_1" />
     </joint>
 
-    <joint name="base_to_finger_1_2" type="revolute">
+    <joint name="base_to_finger_1_1" type="revolute">
         <origin rpy="1.57079632679 -1.57079632679 0" xyz="-0.016510 ${swivel_distance} 0.0000" />
         <parent link="base_link" />
-        <child link="finger_1_2" />
+        <child link="finger_1_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
         <dynamics damping="0" friction="0.0" />
     </joint>
 
-    <joint name="finger_1_2_to_finger_1_3" type="revolute">
+    <joint name="finger_1_1_to_finger_1_2" type="revolute">
         <origin rpy="0 0 0" xyz="0.000000 0.000000 -0.062551" />
-        <parent link="finger_1_2" />
-        <child link="finger_1_3" />
-        <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
+        <parent link="finger_1_1" />
+        <child link="finger_1_2" />
+        <limit effort="10000" lower="0.0" upper="1.57" velocity="2" />
         <axis xyz="1 0 0" />
         <dynamics damping="0" friction="0.0" />
     </joint>
@@ -285,19 +285,19 @@
         <child link="swivel_2" />
     </joint>
 
-    <joint name="base_to_finger_2_2" type="revolute">
+    <joint name="base_to_finger_2_1" type="revolute">
         <origin rpy="-1.57079632679 1.57079632679 0" xyz="-0.016510 -${swivel_distance} 0.000000" />
         <parent link="base_link" />
-        <child link="finger_2_2" />
+        <child link="finger_2_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
         <dynamics damping="0" friction="0.0" />
     </joint>
     
-    <joint name="prox_to_finger_2_3" type="revolute">
+    <joint name="finger_2_1_to_finger_2_2" type="revolute">
         <origin rpy="0 0 0" xyz="0.000000 0.000000 -0.062551" />
-        <parent link="finger_2_2" />
-        <child link="finger_2_3" />
+        <parent link="finger_2_1" />
+        <child link="finger_2_2" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
         <dynamics damping="0" friction="0.0" />
@@ -322,8 +322,9 @@
       <actuator name="$finger12_motor">
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-      <joint name="base_to_finger_1_2">
-          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <joint name="base_to_finger_1_1">
+          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -332,8 +333,9 @@
       <actuator name="$finger13_motor">
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-      <joint name="finger_1_2_to_finger_1_3">
-          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <joint name="finger_1_1_to_finger_1_2">
+          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -342,8 +344,9 @@
       <actuator name="$finger22_motor">
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-      <joint name="base_to_finger_2_2">
-          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <joint name="base_to_finger_2_1">
+          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -352,8 +355,9 @@
       <actuator name="$finger23_motor">
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-      <joint name="finger_2_2_to_finger_2_3">
-          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <joint name="finger_2_1_to_finger_2_2">
+          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
   </transmission>
   
