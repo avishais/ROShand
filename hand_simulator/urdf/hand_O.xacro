@@ -59,7 +59,7 @@
 
   <link name="base_link">
       <visual>
-          <origin rpy="1.57 0 -1.57" xyz="0.06 0.017 0"/>
+          <origin rpy="1.57 0 -1.57" xyz="0 0 0"/>
           <geometry>
             <mesh filename="package://hand_simulator/meshes/base_link.STL"/>
           </geometry>
@@ -134,13 +134,13 @@
       </material>
       <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
@@ -164,13 +164,13 @@
       </material>
       <origin rpy="0 0 -2.4962" xyz="-0.0179 0.0459 -0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 -2.4962" xyz="-0.0179 0.0459 -0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
@@ -228,13 +228,13 @@
       </material>
       <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
@@ -255,13 +255,13 @@
       </material>
       <origin rpy="0 0 -2.4962" xyz="-0.0179 0.0459 -0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 -2.4962" xyz="-0.0179 0.0459 -0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
@@ -289,13 +289,13 @@
       </material>
       <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 -3.141592 2.4" xyz="-0.00 0.0753 0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/proximal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link>
@@ -316,13 +316,13 @@
       </material>
       <origin rpy="0 0 -2.4962" xyz="-0.0179 0.0459 -0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 -2.4962" xyz="-0.0179 0.0459 -0.008" />
       <geometry>
-        <mesh filename="package://openhand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
+        <mesh filename="package://hand_simulator/meshes/distal_O.STL" scale="0.00100 0.00100 0.00100" />
       </geometry>
     </collision>
   </link> 
