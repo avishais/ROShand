@@ -402,7 +402,7 @@
     <joint name="base_to_finger_1_1" type="revolute">
       <parent link="base_link"/>
       <child link="finger_1_1"/>
-      <limit effort="1000.0" lower="0." upper="1.57" velocity="0.5"/>
+      <limit effort="1000.0" lower="0." upper="1.57" velocity="200"/>
       <axis xyz="0 0 -1"/>
       <origin
         xyz="0.0503973683071414 -0.026 0.063"
@@ -434,7 +434,7 @@
     <joint name="base_to_finger_2_1" type="revolute">
       <parent link="base_link"/>
       <child link="finger_2_1"/>
-      <limit effort="1000.0" lower="-1.57" upper="0." velocity="0.5"/>
+      <limit effort="1000.0" lower="-1.57" upper="0." velocity="200"/>
       <axis xyz="0 0 -1"/>
       <origin
       xyz="0.0503973683071413 0.0259999999999999 0.063"
@@ -519,7 +519,6 @@
       </actuator>
       <joint name="finger_1_1_to_finger_1_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
   </transmission>
 
   <transmission name="finger1_3_trans" type="SimpleTransmission">
@@ -529,7 +528,6 @@
       </actuator>
       <joint name="finger_1_2_to_finger_1_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
   </transmission>
 
   <transmission name="finger2_1_trans" type="SimpleTransmission">
@@ -549,7 +547,6 @@
       </actuator>
       <joint name="finger_2_1_to_finger_2_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
   </transmission>
 
   <transmission name="finger2_3_trans" type="SimpleTransmission">
@@ -559,7 +556,6 @@
       </actuator>
       <joint name="finger_2_2_to_finger_2_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
   </transmission>
 
   <transmission name="finger2_3_trans" type="SimpleTransmission">
@@ -569,7 +565,6 @@
       </actuator>
       <joint name="base_to_finger_3_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
   </transmission>
 
   <transmission name="finger3_3_trans" type="SimpleTransmission">

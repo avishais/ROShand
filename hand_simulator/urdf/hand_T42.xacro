@@ -119,12 +119,12 @@
                 <mesh filename="package://hand_simulator/meshes/proximal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
         </visual>
-        <!-- <collision>
-            <origin xyz="0.000000 0.000000 -0.031750" />
+        <collision>
+            <origin xyz="-0.015875 -0.009000 -0.071550" />
             <geometry>
-                <box size="0.038100 0.019050 0.078740" />
+                <mesh filename="package://hand_simulator/meshes/proximal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
-        </collision> -->
+        </collision>
     </link>
     <gazebo reference="finger_1_1">
       <selfCollide>true</selfCollide>
@@ -146,12 +146,12 @@
                 <mesh filename="package://hand_simulator/meshes/distal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
         </visual>
-        <!-- <collision>
+        <collision>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
             <geometry>
                 <mesh filename="package://hand_simulator/meshes/distal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
-        </collision> -->
+        </collision>
     </link>
     <gazebo reference="finger_1_2">
       <selfCollide>true</selfCollide>
@@ -192,12 +192,12 @@
                 <mesh filename="package://hand_simulator/meshes/proximal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
         </visual>
-        <!-- <collision>
-            <origin xyz="0.000000 0.000000 -0.031750" />
+        <collision>
+            <origin xyz="-0.015875 -0.009000 -0.071550" />
             <geometry>
-                <box size="0.038100 0.019050 0.078740" />
+                <mesh filename="package://hand_simulator/meshes/proximal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
-        </collision> -->
+        </collision>
     </link>
     <gazebo reference="finger_2_1">
       <selfCollide>true</selfCollide>
@@ -219,12 +219,12 @@
                 <mesh filename="package://hand_simulator/meshes/distal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
         </visual>
-        <!-- <collision>
+        <collision>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
             <geometry>
                 <mesh filename="package://hand_simulator/meshes/distal_t42.STL" scale="0.025400 0.025400 0.025400" />
             </geometry>
-        </collision> -->
+        </collision>
     </link>
     <gazebo reference="finger_2_2">
       <selfCollide>true</selfCollide>
@@ -243,16 +243,16 @@
         <parent link="world"/>
         <child link="rail"/>
         <origin
-          xyz="0.37 0 0.25"
+          xyz="0.37 0 0.4"
           rpy="0 0 0" />
     </joint>
 
     <joint name="rail_to_base" type="prismatic">
-        <origin rpy="0 0 0" xyz="0 0.000000 0." />
+        <origin rpy="0 0 0" xyz="-0.06 0.000000 0.2" />
         <parent link="rail" />
         <child link="base_link" />
-        <axis xyz="0 1 0"/>
-        <limit effort="1000.0" lower="-100." upper="100." velocity="4"/>
+        <axis xyz="0 0 1"/>
+        <limit effort="1000.0" lower="-100." upper="100." velocity="1"/>
     </joint>
 
     <joint name="base_link_to_swivel_1" type="fixed">
@@ -267,7 +267,7 @@
         <child link="finger_1_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="0" friction="0.0" />
+        <dynamics damping="5" friction="0.0" />
     </joint>
 
     <joint name="finger_1_1_to_finger_1_2" type="revolute">
@@ -276,7 +276,7 @@
         <child link="finger_1_2" />
         <limit effort="10000" lower="0.0" upper="1.57" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="0" friction="0.0" />
+        <dynamics damping="5" friction="0.0" />
     </joint>
 
     <joint name="base_link_to_swivel_2" type="fixed">
@@ -291,16 +291,16 @@
         <child link="finger_2_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="0" friction="0.0" />
+        <dynamics damping="5" friction="0.0" />
     </joint>
     
     <joint name="finger_2_1_to_finger_2_2" type="revolute">
         <origin rpy="0 0 0" xyz="0.000000 0.000000 -0.062551" />
         <parent link="finger_2_1" />
         <child link="finger_2_2" />
-        <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
+        <limit effort="10000" lower="0.0" upper="1.57" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="0" friction="0.0" />
+        <dynamics damping="5" friction="0.0" />
     </joint>
     
 
@@ -323,8 +323,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="base_to_finger_1_1">
-          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -334,8 +333,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="finger_1_1_to_finger_1_2">
-          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -345,8 +343,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="base_to_finger_2_1">
-          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
 
@@ -356,8 +353,7 @@
           <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="finger_2_1_to_finger_2_2">
-          <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
-          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
   </transmission>
   
