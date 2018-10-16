@@ -12,12 +12,13 @@ from policy_gradient import PolicyGradient
 
 class runPG():
     n_inputs = 4
-    n_outputs = 4 # right and left for each finger
-    # n_outputs = 8 # right, left and stop for each finger
+    # n_outputs = 4 # right and left for each finger
+    n_outputs = 8 # right, left and stop for each finger
+    max_episodes = 1200
 
     net = 0
     X = 0
-    A = np.array([[-1, -1], [-1, 1], [1, -1], [1, 1], [0, -1], [0, 1], [-1, 0], [1, 0]])
+    A = np.array([[-1, -1], [1, -1], [-1, 1], [1, 1], [0, -1], [0, 1], [-1, 0], [1, 0]])
 
     mode = 5
     reward_mode = 2
@@ -39,7 +40,7 @@ class runPG():
         self.RL = PolicyGradient(
             n_actions = self.n_outputs,
             n_features = self.n_inputs,
-            learning_rate=0.02,
+            learning_rate=0.005,
             reward_decay=0.99,
             load_saved_net=False,
             # output_graph=True,
@@ -51,27 +52,20 @@ class runPG():
         obs_srv = rospy.ServiceProxy('/RL/observation', observation)
         drop_srv = rospy.ServiceProxy('/RL/IsObjDropped', IsDropped)
         move_srv = rospy.ServiceProxy('/RL/MoveGripper', TargetAngles)
-        open_srv = rospy.ServiceProxy('/RL/OpenGripper', Empty)
-        close_srv = rospy.ServiceProxy('/RL/CloseGripper', Empty)
-
-        rospy.sleep(3)
-        o = open_srv()
+        reset_srv = rospy.ServiceProxy('/RL/ResetGripper', Empty)
 
         episode_count = 0
-        rate = rospy.Rate(15) # 15hz
+        rate = rospy.Rate(100) # 100hz
         while not rospy.is_shutdown():
 
             if self.stLearning:
                 ## Start episode ##
                 episode_count += 1
 
-                # Close gripper
-                raw_input("Place object between fingers and press Enter to close gripper...")
-                close_srv()
+                # Set gripper
+                reset_srv()
                 while not self.gripper_closed:
                     rate.sleep()
-
-                raw_input("Remove table and press Enter to start episode...")
 
                 # Get observation
                 obs = np.array(obs_srv().state)
@@ -89,6 +83,8 @@ class runPG():
                         # Get observation
                         obs_ = np.array(obs_srv().state)
                         fail = drop_srv().dropped # Check if dropped - end of episode
+                        # if fail:
+                        #     raw_input("Stop.")
                     else:
                         # End episode if overload or angle limits reached
                         rospy.logerr('[RL] Failed to move gripper. Episode declared failed.')
@@ -120,15 +116,10 @@ class runPG():
                 self.plot_sav()
                 self.possible_plot = False
 
-            # Open gripper
-            if self.gripper_closed:
-                o = open_srv()
-                rospy.sleep(0.2)
-            # self.stLearning = False
+            if self.max_episodes < episode_count:
+                self.plot_sav()
+                break
 
-            # print(obs_srv().state)
-
-            # rospy.spin()
             rate.sleep()
 
     def plot_sav(self):
@@ -167,8 +158,8 @@ class runPG():
                 reward = -1.
             done = fail
             
-            if obs[0] > 135.:
-                raw_input('Reached goal, x = %f.' % obs[0])
+            if obs[1] > 40.:
+                print('Reached goal, x = %f.' % obs[0])
                 reward = 5.
                 done = True
 
