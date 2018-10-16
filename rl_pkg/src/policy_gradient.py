@@ -26,9 +26,9 @@ class PolicyGradient:
             self,
             n_actions,
             n_features,
-            learning_rate=0.01,
+            learning_rate=0.001,
             reward_decay=0.95,
-            load_saved_net=True,
+            load_saved_net=False,
             output_graph=False,
     ):
         self.n_actions = n_actions
@@ -71,7 +71,7 @@ class PolicyGradient:
             inputs=self.tf_obs,
             units=10,
             activation=tf.nn.tanh,  # tanh activation
-            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
+            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.5),
             bias_initializer=tf.constant_initializer(0.1),
             name='fc1'
         )
@@ -80,7 +80,7 @@ class PolicyGradient:
             inputs=layer,
             units=self.n_actions,
             activation=None,
-            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
+            kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.5),
             bias_initializer=tf.constant_initializer(0.1),
             name='fc2'
         )
