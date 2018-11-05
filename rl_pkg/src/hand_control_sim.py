@@ -12,16 +12,16 @@ class hand_control():
 
     finger_opening_position = np.array([0.005, 0.005])
     finger_closing_position = np.array([0.08, 0.08])
-    finger_move_offset = np.array([0.0002, 0.0002])
+    finger_move_step_size = np.array([0.0002, 0.0002])
     closed_load = np.array(20.)
 
     gripper_pos = np.array([0., 0.])
     gripper_load = np.array([0., 0.])
     lift_status = False # True - lift up, False - lift down
     object_grasped = False
-    base_pos = [0,0]
+    base_pos = [0.,0.]
     base_theta = 0
-    obj_pos = [0,0]
+    obj_pos = [0.,0.]
     R = []
     count = 1
 
@@ -67,17 +67,18 @@ class hand_control():
         self.lift_status = True if msg.data == 'up' else False
 
     def callbackObj(self, msg):
-        self.obj_pos = np.array(msg.data)
+        Obj_pos = np.array(msg.data)
 
-        self.object_grasped = True if abs(self.obj_pos[2]) < 1e-2 else False
+        self.object_grasped = True if abs(Obj_pos[2]) < 1e-2 else False
 
-        self.obj_pos = self.obj_pos[:2]*1000 # m to mm
+        self.obj_pos = Obj_pos[:2]*1000 # m to mm
 
     def ResetGripper(self, msg):
         ratein = rospy.Rate(15)
         while 1:
             # Open gripper
             self.moveGripper(self.finger_opening_position)
+            rospy.sleep(.5)
             # Drop lift down
             while self.lift_status:
                 self.move_lift_srv.call()
@@ -98,12 +99,12 @@ class hand_control():
         self.gripper_status = 'closed'
 
         return EmptyResponse()
-
+        
     def MoveGripper(self, msg):
-        # This function should accept a vector of normalized incraments to the current angles: msg.angles = [dq1, dq2], where dq1 and dq2 can be equal to 0 (no move), 1,-1 (increase or decrease angles by finger_move_offset)
+        # This function should accept a vector of normalized incraments to the current angles: msg.angles = [dq1, dq2], where dq1 and dq2 can be equal to 0 (no move), 1,-1 (increase or decrease angles by finger_move_step_size)
 
         inc = np.array(msg.angles)
-        inc_angles = np.multiply(self.finger_move_offset, inc)
+        inc_angles = np.multiply(self.finger_move_step_size, inc)
 
         desired = self.gripper_pos + inc_angles
 
@@ -129,10 +130,9 @@ class hand_control():
         return {'dropped': not self.object_grasped}
 
     def GetObservation(self, msg):
-        obs = np.concatenate((self.obj_pos, self.gripper_load))
+        obs = np.concatenate((self.obj_pos, self.gripper_load), axis=0)
 
         return {'state': obs}
-
 
 
 if __name__ == '__main__':
