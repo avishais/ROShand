@@ -16,8 +16,8 @@ class collect_data():
     stCollecting = True # Enable collection
     discrete_actions = False # Discrete or continuous actions
 
-    num_episodes = 100
-    episode_length = 200
+    num_episodes = 1000
+    episode_length = 10000
 
     texp = transition_experience()
 
@@ -54,7 +54,7 @@ class collect_data():
                         state = np.array(obs_srv().state)
                         action = self.choose_action()
                         
-                        for _ in range( np.random.randint(100) ):
+                        for _ in range( np.random.randint(200) ):
                             suc = move_srv(action)
                             rospy.sleep(0.05)
                             rate.sleep()
@@ -83,7 +83,7 @@ class collect_data():
                         self.stCollecting = False
                         print('Finished running %d episodes!' % self.num_episodes)
 
-                    if n % 2 == 0:
+                    if n % 10 == 0:
                         self.texp.save()
                 
                 self.texp.save()             
@@ -102,13 +102,13 @@ class collect_data():
             a = A[np.random.randint(A.shape[0])]
         else:
             a = np.random.uniform(-1.,1.,2)
-            # if np.random.uniform(0,1,1) > 0.6:
-            #     if np.random.uniform(0,1,1) > 0.5:
-            #         a[0] = np.random.uniform(-1.,-0.8.,1)
-            #         a[1] = np.random.uniform(-1.,-0.8.,1)
-            #     else:
-            #         a[0] = np.random.uniform(0.8.,1.,1)
-            #         a[1] = np.random.uniform(0.8,1.,1)
+            if np.random.uniform(0,1,1) > 0.35:
+                if np.random.uniform(0,1,1) > 0.5:
+                    a[0] = np.random.uniform(-1.,-0.8,1)
+                    a[1] = np.random.uniform(-1.,-0.8,1)
+                else:
+                    a[0] = np.random.uniform(0.8,1.,1)
+                    a[1] = np.random.uniform(0.8,1.,1)
 
         return a
 

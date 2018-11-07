@@ -28,6 +28,15 @@ class transition_experience():
         else:
             self.clear()
 
+    def getComponents(self):
+        
+        states = np.array([item[0] for item in self.memory])
+        actions = np.array([item[1] for item in self.memory])
+        next_states = np.array([item[2] for item in self.memory])
+
+        return states, actions, next_states
+
+
     def save(self):
         file_pi = open(self.file_name, 'w')
         pickle.dump(self.memory, file_pi)
