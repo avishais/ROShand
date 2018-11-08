@@ -18,7 +18,7 @@ def main():
 
     # texp.divide_and_save(n = 750)
 
-    texp.plot_data()
+    # texp.plot_data()
 
     return 1
 
