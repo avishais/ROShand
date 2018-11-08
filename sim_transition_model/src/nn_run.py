@@ -48,7 +48,7 @@ n_test = 750 #int(np.round(0.1*prev_states.shape[0]))
 n = prev_states.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [72]*2
+hidden_layers = [72]*3
 activation = 2
 
 X = np.concatenate((prev_states, actions, next_states-prev_states), axis=1)
@@ -65,9 +65,9 @@ x_test = X[:n_test,0:num_input]
 y_test = X[:n_test,num_input:]
 
 # Training Parameters
-learning_rate =  0.001
+learning_rate =  0.005
 num_steps = int(5e5)
-batch_size = 150
+batch_size = 250
 display_step = 100
 
 # tf Graph input 
@@ -143,7 +143,7 @@ with tf.Session() as sess:
             # Display logs per step
             if i % display_step == 0 or i == 1:
                 print('Step %i: Minibatch Loss: %f' % (i, c))
-                save_path = saver.save(sess, "../data/temp.ckpt")
+                save_path = saver.save(sess, "../data/" + save_to)
                 COSTS.append(c)
                 STEPS.append(i)
 
@@ -181,7 +181,7 @@ with tf.Session() as sess:
     # y = sess.run(prediction, {X: f, keep_prob_input: 1.0, keep_prob: 1.0})
     # print("Testing point: ", f)
     # print("Point ", j, ": ", y, y_test[j,:])
-    # # xo = denormz(x_train[j, 0:2], x_max, x_min)
+    # # xo = denormz(x_test[j, 0:2], x_max, x_min)
     # # yo = denormz(y, x_max[4:], x_min[4:])
     # f = f.reshape(num_input, 1)
     # xo = denormzG(f[0:2], x_mu, x_sigma)
@@ -194,30 +194,31 @@ with tf.Session() as sess:
     # print("Real next step: ", xo.reshape(1,2) + yr[0:2])
 
     # Open-loop
-    plt.figure(2)
-    sa = np.copy(x_test[250,:]).reshape(1,num_input)
-    s_real = np.copy(x_test[250,:]).reshape(num_input, 1)[0:2]#denormzG(np.copy(x_test[0,:]).reshape(num_input, 1)[0:2], x_mu, x_sigma)
-    for i in range(251, n_test):
+    # plt.figure(2)
+    # st = 100
+    # en = 110
+    # S = x_test[st:en,:]
+    # n = S.shape[0]
+    # sa = np.copy(S[0,:]).reshape(1,num_input)
+    # sa_dn = denormzG(np.copy(sa).reshape(num_input, 1)[0:2], x_mu, x_sigma)
+    # for i in range(st+1, en):
+    #     print(sa_dn.reshape(1,2))
         
-        s_next_predicted = sess.run(prediction, {X: sa, keep_prob_input: 1.0, keep_prob: 1.0})
-        s_next_predicted_dn = np.copy(s_next_predicted).reshape(num_output, 1)[0:2]#denormzG(np.copy(s_next_predicted).reshape(num_output, 1)[0:2], x_mu, x_sigma)
+    #     ds_predicted = sess.run(prediction, {X: sa, keep_prob_input: 1.0, keep_prob: 1.0})
+    #     ds_predicted_dn = denormzG(np.copy(ds_predicted), x_mu[num_input:], x_sigma[num_input:])
 
-        s_next_real = np.copy(x_test[i,:]).reshape(num_input, 1)[0:2]#denormzG(np.copy(x_test[i,:]).reshape(num_input, 1)[0:2], x_mu, x_sigma)
-        sa_dn = sa.reshape(num_input, 1)[0:2]#denormzG(sa.reshape(num_input, 1)[0:2], x_mu, x_sigma)
+    #     s_next_predicted_dn = sa_dn.reshape(1,2) + ds_predicted_dn[:,0:2]
+    #     s_next_predicted = sa.reshape(1,6)[:,:4] + ds_predicted[:,0:4]
 
-        plt.plot([sa_dn[0], s_next_predicted_dn[0]], [sa_dn[1], s_next_predicted_dn[1]], '-b')
-        plt.plot([s_real[0], s_next_real[0]], [s_real[1], s_next_real[1]], '--k')
+    #     plt.plot([sa_dn[0], s_next_predicted_dn[0][0]], [sa_dn[1], s_next_predicted_dn[0][1]], '-b')
 
-        sa = np.concatenate((s_next_predicted, x_test[i,4:6].reshape(1,2)), axis=1)
-        s_real = s_next_real
+    #     sa = np.concatenate((s_next_predicted, x_test[i,4:6].reshape(1,2)), axis=1)
+    #     sa_dn = s_next_predicted_dn[0]
+
+    # S = np.array([denormzG(sa.reshape(num_input, 1)[0:2], x_mu, x_sigma).reshape(1,2) for sa in S]).reshape(n,2)
+    # plt.plot(S[:,0], S[:,1], 'o:k')
 
     export_net(weights, biases, x_mu, x_sigma, activation, sess, '../data/net_transition.netxt')
-
-# x_train = denormz(x_train, x_max, x_min)
-# x_train_pred = denormz(x_train_pred, x_max, x_min)
-# x_test = denormz(x_test, x_max, x_min)
-# x_test_pred = denormz(x_test_pred, x_max, x_min)
-# x_path = denormz(x_path, x_max, x_min)
 
 plt.show()
 
