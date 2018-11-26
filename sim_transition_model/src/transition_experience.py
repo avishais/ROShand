@@ -6,8 +6,16 @@ import matplotlib.pyplot as plt
 
 
 class transition_experience():
-    def __init__(self, Load=True):
-        self.file_name = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data.obj'
+    path = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/'
+
+    def __init__(self, Load=True, discrete = False):
+
+        if discrete:
+            self.mode = 'discrete'
+        else:
+            self.mode = 'cont'
+        
+        self.file_name = self.path + 'transition_data_' + self.mode + '.obj'
 
         if Load:
             self.load()
@@ -22,8 +30,10 @@ class transition_experience():
 
     def load(self):
         if os.path.isfile(self.file_name):
-            filehandler = open(self.file_name, 'r')
-            self.memory = pickle.load(filehandler)
+            print('Loading data from ' + self.file_name)
+            with open(self.file_name, 'rb') as filehandler:
+            # filehandler = open(self.file_name, 'r')
+                self.memory = pickle.load(filehandler)
             print('Loaded transition data of size %d.'%self.getSize())
         else:
             self.clear()
@@ -38,9 +48,11 @@ class transition_experience():
 
 
     def save(self):
-        file_pi = open(self.file_name, 'w')
+        print('Saving data...')
+        file_pi = open(self.file_name, 'wb')
         pickle.dump(self.memory, file_pi)
         print('Saved transition data of size %d.'%self.getSize())
+        file_pi.close()
 
     def divide_and_save(self, n = 1000):
         file_training = open('/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/training_data', 'w')
@@ -82,16 +94,20 @@ class transition_experience():
 
     def save_to_file(self):
 
-        file_name = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data.txt'
+        filen = self.path + 'transition_data_' + self.mode + '.db'
 
         n = self.getSize()
 
         states = np.array([item[0] for item in self.memory])
         actions = np.array([item[1] for item in self.memory])
         next_states = np.array([item[2] for item in self.memory])
+        done = np.array([item[3] for item in self.memory])
+
+        for i in range(len(done)):
+            if done[i]:
+                next_states[i] = np.array([-1000.,-1000.,-1000.,-1000.])
 
         M = np.concatenate((states, actions, next_states), axis=1)
 
-        np.savetxt(file_name, M, delimiter=' ')
-
+        np.savetxt(filen, M, delimiter=' ')
 

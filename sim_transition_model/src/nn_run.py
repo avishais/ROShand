@@ -37,9 +37,8 @@ print('Loading training data...')
 
 mode = 8
 
-texp = transition_experience()
+texp = transition_experience(discrete=False)
 prev_states, actions, next_states = texp.getComponents()
-# Xtest = Q['Xtest1']['data'][0][0]
 
 num_input = 6 
 num_output = 4
@@ -48,10 +47,15 @@ n_test = 750 #int(np.round(0.1*prev_states.shape[0]))
 n = prev_states.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [72]*3
+hidden_layers = [250]*2
 activation = 2
 
 X = np.concatenate((prev_states, actions, next_states-prev_states), axis=1)
+
+X0 = np.loadtxt('/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data_cont_0.db')
+X1 = np.concatenate((X0[:,:6], X0[:,6:10]-X0[:,:4]), axis=1)
+X = np.concatenate((X, X1), axis=0)
+print('Loaded more data of %d points'%X.shape[0])
 
 x_max = np.max(X, axis=0)
 x_min = np.min(X, axis=0)
@@ -65,8 +69,8 @@ x_test = X[:n_test,0:num_input]
 y_test = X[:n_test,num_input:]
 
 # Training Parameters
-learning_rate =  0.005
-num_steps = int(5e5)
+learning_rate =  0.001
+num_steps = int(1e5)
 batch_size = 250
 display_step = 100
 

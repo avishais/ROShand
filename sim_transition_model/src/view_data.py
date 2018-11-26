@@ -12,7 +12,7 @@ from transition_experience import *
 
 
 def main():
-    texp = transition_experience()
+    texp = transition_experience(discrete=True)
 
     texp.save_to_file()
 

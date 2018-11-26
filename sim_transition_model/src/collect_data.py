@@ -16,7 +16,7 @@ class collect_data():
     stCollecting = True # Enable collection
     discrete_actions = False # Discrete or continuous actions
 
-    num_episodes = 1000
+    num_episodes = 20000
     episode_length = 10000
 
     texp = transition_experience()
@@ -25,6 +25,7 @@ class collect_data():
         rospy.init_node('collect_data', anonymous=True)
 
         rospy.Subscriber('/RL/gripper_status', String, self.callbackGripperStatus)
+        pub_gripper_action = rospy.Publisher('RL/gripper_action', Float32MultiArray, queue_size=10)
         rospy.Service('/RL/start_collecting', Empty, self.start_collecting)
         obs_srv = rospy.ServiceProxy('/RL/observation', observation)
         drop_srv = rospy.ServiceProxy('/RL/IsObjDropped', IsDropped)
@@ -32,6 +33,8 @@ class collect_data():
         reset_srv = rospy.ServiceProxy('/RL/ResetGripper', Empty)
 
         rospy.sleep(1)
+
+        msg = Float32MultiArray()
 
         rate = rospy.Rate(15) # 15hz
         while not rospy.is_shutdown():
@@ -55,6 +58,8 @@ class collect_data():
                         action = self.choose_action()
                         
                         for _ in range( np.random.randint(200) ):
+                            msg.data = action
+                            pub_gripper_action.publish(msg)
                             suc = move_srv(action)
                             rospy.sleep(0.05)
                             rate.sleep()
@@ -79,11 +84,11 @@ class collect_data():
                         if Done:
                             break
 
-                    if n == self.num_episodes-1:
+                    if n == self.num_episodes-1 or self.texp.getSize() >= 5.0e6:
                         self.stCollecting = False
                         print('Finished running %d episodes!' % self.num_episodes)
 
-                    if n % 10 == 0:
+                    if n % 20 == 0:
                         self.texp.save()
                 
                 self.texp.save()             
@@ -100,6 +105,11 @@ class collect_data():
         if self.discrete_actions:
             A = np.array([[1.,1.],[-1.,-1.],[-1.,1.],[1.,-1.],[1.,0.],[-1.,0.],[0.,-1.],[0.,1.]])
             a = A[np.random.randint(A.shape[0])]
+            if np.random.uniform(0,1,1) > 0.5:
+                if np.random.uniform(0,1,1) > 0.5:
+                    a = A[0]
+                else:
+                    a = A[1]
         else:
             a = np.random.uniform(-1.,1.,2)
             if np.random.uniform(0,1,1) > 0.35:

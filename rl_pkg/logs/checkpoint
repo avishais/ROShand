@@ -1,2 +1,0 @@
-model_checkpoint_path: "/home/pracsys/catkin_ws/src/rutgers_collab/src/rl_pkg/logs/net.ckpt"
-all_model_checkpoint_paths: "/home/pracsys/catkin_ws/src/rutgers_collab/src/rl_pkg/logs/net.ckpt"

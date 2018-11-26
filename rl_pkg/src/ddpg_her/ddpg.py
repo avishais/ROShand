@@ -105,6 +105,7 @@ class DDPGAgent:
             net = tf.concat([s, g], 1)
             net = tf.layers.dense(net, 64, tf.nn.relu)
             net = tf.layers.dense(net, 64, tf.nn.relu)
+            net = tf.layers.dense(net, 64, tf.nn.relu) # Added for testing
             a = tf.layers.dense(net, self.action_size, tf.nn.tanh)
             return a * (self.action_high-self.action_low)/2 + (self.action_high+self.action_low)/2
     
