@@ -1,0 +1,14 @@
+<launch>
+  <!-- Requires Python3 - source relavent venv -->
+
+  <arg name="recordData" default="false" />
+
+  <node pkg="rl_pkg" name="runDDPG" type="runDDPG_transition_model.py" output="screen"/>
+
+ <node pkg="rosbag" type="record" name="rosbag_record_data"
+       args="record -O /home/pracsys/Dropbox/transfer/F  /gripper/load /gripper/pos /hand/obj_pos"
+       if="$(arg recordData)" />
+
+  <!-- <node pkg="rl_pkg" type="plot_obj_pos.py" name="Plot" output="screen"></node> -->
+
+</launch>

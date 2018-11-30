@@ -1,0 +1,5 @@
+<launch>
+
+  <node pkg="sim_transition_model" name="gp_hand_sim" type="gp_hand_sim.py" output="screen"/>
+
+</launch>

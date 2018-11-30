@@ -4,7 +4,7 @@
   <arg name="recordData" default="false" />
 
   <node pkg="rl_pkg" name="hand_control" type="hand_control_sim.py" output="screen"></node>
-  <node pkg="rl_pkg" name="runDDPG" type="runDDPG_sim.py" output="screen"/>
+  <node pkg="rl_pkg" name="runDDPG" type="runDDPG6_sim.py" output="screen"/>
 
  <node pkg="rosbag" type="record" name="rosbag_record_data"
        args="record -O /home/pracsys/Dropbox/transfer/F  /gripper/load /gripper/pos /hand/obj_pos"

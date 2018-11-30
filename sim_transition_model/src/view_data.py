@@ -12,13 +12,13 @@ from transition_experience import *
 
 
 def main():
-    texp = transition_experience()
+    texp = transition_experience(discrete=False)
 
     texp.save_to_file()
 
     # texp.divide_and_save(n = 750)
 
-    # texp.plot_data()
+    texp.plot_data()
 
     return 1
 
