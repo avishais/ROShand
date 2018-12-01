@@ -2,7 +2,10 @@
 # Created by https://www.gitignore.io/api/c++,python,matlab
 
 *.db
+<<<<<<< HEAD
 *.mat
+=======
+>>>>>>> 7f74cac4ae901063bb1e296ce93a312b56b19609
 
 ### C++ ###
 # Prerequisites

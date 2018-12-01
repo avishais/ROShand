@@ -27,6 +27,8 @@ classdef gp_class < handle
     methods
         % Constructor
         function obj = gp_class(m, IsDiscrete)
+%             rosinit
+%             obj.predictServer = rossvcserver('/predictWithState', 'gp_predict/StateAction2State',@obj.predictStateCallback)
             
             warning('off','all')
 
@@ -46,7 +48,7 @@ classdef gp_class < handle
             % Choose the manifold dimension to reduce to 
             switch obj.mode
                 case 1
-                    obj.dr_dim = 3;
+                    obj.dr_dim = 2;
                 case 2
                     obj.dr_dim = 2;
                 otherwise
@@ -62,20 +64,28 @@ classdef gp_class < handle
             obj = obj.load_data();
             disp("Finished constructor")
         end
-               
+        
+%         function predictStateCallback(obj)
+%             exampleHelperROSCreateSampleNetwork
+        
         function obj = load_data(obj)      
             disp('Loading data...');
             
             if obj.IsDiscrete
-                file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/sim_data_discrete.mat';
+                % file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data_discrete.db';
+                file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/Ce_20_5.db';
+                is_start = 1;
+                is_end = 1;%1900;
             else
-                file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/sim_data_cont.mat';
+                file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data_cont.db';
+                is_start = 2000;%250;
+                is_end = 2600;%750;
             end
                 
-            // D = dlmread(file);
-            Q = load(file)
+            D = dlmread(file);
             
-            obj.Xtraining = Q.D;
+            obj.Xtraining = D(is_end+1:end,:);
+            obj.Xtest = D(is_start:is_end,:);
             obj.I.base_pos = [0 0];
             obj.I.theta = 0;
             
@@ -87,6 +97,7 @@ classdef gp_class < handle
             end
             if obj.mode == 2
                 obj.Xtraining = obj.Xtraining(:, [1 2 5 6 7 8]);
+                obj.Xtest = obj.Xtest(:, [1 2 5 6 7 8]);
                 obj.I.action_inx = 3:4;
                 obj.I.state_inx = 1:2;
                 obj.I.state_nxt_inx = 5:6;
@@ -114,14 +125,14 @@ classdef gp_class < handle
                 obj.kdtree_nn = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]).*repmat(obj.We,size(obj.Xtraining,1),1), 'NSMethod','kdtree','Distance','euclidean');
             else
                 obj.We = diag(obj.w);
-                obj.kdtree = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'Distance', @obj.distfun);
+                obj.kdtree = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'Distance',@obj.distfun);
                 obj.kdtree_nn = obj.kdtree;
             end
             
             disp(['Data loaded with ' num2str(size(obj.Xtraining,1)) ' transition points.']);
         end
         
-        function D2 = distfun(obj, ZI, ZJ)
+        function D2 = distfun(obj, ZI,ZJ)
             
             if isempty(obj.We)
                 obj.We = diag(ones(1,size(ZI,2)));
@@ -210,7 +221,7 @@ classdef gp_class < handle
         
         function data_nn = diffusion_metric(obj, sa)
             
-            [idx, ~] = knnsearch(obj.kdtree, sa, 'K', obj.k_ambiant);
+            [idx, ~] = knnsearch(obj.kdtree, sa, 'K', obj.k_ambient);
             data = obj.Xtraining(idx,:);
             
             data_reduced = obj.dr_diffusionmap(data(:,[obj.I.state_inx obj.I.action_inx]));
