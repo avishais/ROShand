@@ -118,7 +118,6 @@ class Spin_gp_hand_sim():
 
         return eng.getNN(gp_obj, matS, matA, self.nn_radius, nargout=1)
         
-
 if __name__ == '__main__':
     eng = matlab.engine.start_matlab()
     eng.addpath('/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/src')
