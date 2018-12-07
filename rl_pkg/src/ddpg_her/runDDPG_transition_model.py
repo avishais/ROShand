@@ -15,12 +15,12 @@ import matplotlib.pyplot as plt
 class runDDPG():
     n_inputs = 4
     n_outputs = 2 # Actuator angles change
-    state_region = np.array([[-171.0700, -430.5800],[293.8600, -176.4200]])
+    state_region = np.array([[-92.6794,   44.1619],[90.0164,  140.6792]])
     load_saved_net = False
 
     num_epochs = 1000
     num_episodes = 20
-    episode_length = 400
+    episode_length = 1000
     # stop_bound = 800
     optimization_steps = 20
     K = 5 # number of random future states
@@ -98,15 +98,13 @@ class runDDPG():
                         if suc:
                             # Get observation
                             next_state = np.array(obs_srv().state)
-                            fail = drop_srv().dropped # Check if dropped - end of episode
                         else:
                             # End episode if overload or angle limits reached
                             rospy.logerr('[RL] Failed to move gripper. Episode declared failed.')
-                            fail = True 
 
                         visited_states = np.append(visited_states, [next_state[:2]], axis=0)
 
-                        reward, done = self.transition_reward(next_state, goal, fail)
+                        reward, done = self.transition_reward(next_state, goal, not suc)
                         ep_total_r += reward
                         self.ep_experience.add(state, action, reward, next_state, done, goal)
                         state = next_state

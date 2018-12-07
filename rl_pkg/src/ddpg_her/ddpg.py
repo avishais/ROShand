@@ -61,7 +61,7 @@ class DDPGAgent:
         self.soft_update_op = [[tf.assign(ta, (1 - self.tau) * ta + self.tau * ea), tf.assign(tc, (1 - self.tau) * tc + self.tau * ec)]
                              for ta, ea, tc, ec in zip(self.at_params, self.ae_params, self.ct_params, self.ce_params)]
 
-        q_target = self.R + self.gamma * (1-self.D) * self.q_
+        q_target = self.R + self.gamma * (1-self.D) * self.q_ # If done, equals to reward, else, apply gamma
         
         self.c_loss = tf.losses.mean_squared_error(q_target, self.q)
         self.a_loss = - tf.reduce_mean(self.q)    # maximize the q
@@ -103,17 +103,17 @@ class DDPGAgent:
     def _build_a(self, s, g, scope): # policy
         with tf.variable_scope(scope):
             net = tf.concat([s, g], 1)
-            net = tf.layers.dense(net, 64, tf.nn.relu)
-            net = tf.layers.dense(net, 64, tf.nn.relu)
-            net = tf.layers.dense(net, 64, tf.nn.relu) # Added for testing
+            net = tf.layers.dense(net, 200, tf.nn.relu)
+            net = tf.layers.dense(net, 200, tf.nn.relu)
+            # net = tf.layers.dense(net, 64, tf.nn.relu) # Added for testing
             a = tf.layers.dense(net, self.action_size, tf.nn.tanh)
             return a * (self.action_high-self.action_low)/2 + (self.action_high+self.action_low)/2
     
     def _build_c(self, s, a, g, scope): # Q value
         with tf.variable_scope(scope):
             net = tf.concat([s, a, g], 1)
-            net = tf.layers.dense(net, 64, tf.nn.relu)
-            net = tf.layers.dense(net, 64, tf.nn.relu)
+            net = tf.layers.dense(net, 100, tf.nn.relu)
+            net = tf.layers.dense(net, 100, tf.nn.relu)
             return tf.layers.dense(net, 1)
     
     def choose_action(self, state, goal, variance): # normal distribution

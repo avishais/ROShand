@@ -19,7 +19,7 @@ classdef gp_class < handle
         euclidean
         dr_dim
         IsDiscrete
-        k_ambiant
+        k_ambient
         k_manifold
         k_euclidean
     end
@@ -27,8 +27,6 @@ classdef gp_class < handle
     methods
         % Constructor
         function obj = gp_class(m, IsDiscrete)
-%             rosinit
-%             obj.predictServer = rossvcserver('/predictWithState', 'gp_predict/StateAction2State',@obj.predictStateCallback)
             
             warning('off','all')
 
@@ -50,14 +48,14 @@ classdef gp_class < handle
                 case 1
                     obj.dr_dim = 2;
                 case 2
-                    obj.dr_dim = 2;
+                    obj.dr_dim = 2; % Only object position
                 otherwise
                     obj.dr_dim = 3;
             end
             
             obj.euclidean = false;
 
-            obj.k_ambiant = 1000;
+            obj.k_ambient = 1000;
             obj.k_manifold = 100;
             obj.k_euclidean = 500;
             
@@ -65,8 +63,6 @@ classdef gp_class < handle
             disp("Finished constructor")
         end
         
-%         function predictStateCallback(obj)
-%             exampleHelperROSCreateSampleNetwork
         
         function obj = load_data(obj)      
             disp('Loading data...');
@@ -74,18 +70,15 @@ classdef gp_class < handle
             if obj.IsDiscrete
                 % file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data_discrete.db';
                 file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/Ce_20_5.db';
-                is_start = 1;
-                is_end = 1;%1900;
+                D = dlmread(file);
             else
-                file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data_cont.db';
-                is_start = 2000;%250;
-                is_end = 2600;%750;
-            end
-                
-            D = dlmread(file);
+                % file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data_cont.db';
+                file = '/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/sim_data_cont.mat';
+                Q = load(file);
+                D = Q.D;
+            end           
             
-            obj.Xtraining = D(is_end+1:end,:);
-            obj.Xtest = D(is_start:is_end,:);
+            obj.Xtraining = D;
             obj.I.base_pos = [0 0];
             obj.I.theta = 0;
             
@@ -97,7 +90,6 @@ classdef gp_class < handle
             end
             if obj.mode == 2
                 obj.Xtraining = obj.Xtraining(:, [1 2 5 6 7 8]);
-                obj.Xtest = obj.Xtest(:, [1 2 5 6 7 8]);
                 obj.I.action_inx = 3:4;
                 obj.I.state_inx = 1:2;
                 obj.I.state_nxt_inx = 5:6;
@@ -246,6 +238,16 @@ classdef gp_class < handle
         
         function x = denormz(obj, x)
             x = x .* (obj.I.xmax(1:length(x))-obj.I.xmin(1:length(x))) + obj.I.xmin(1:length(x));
+        end
+
+        % Sample state from the data as an initial position for the episode
+        function s = sample_s(obj)
+
+            n = size(obj.Xtraining, 1);
+            i = randi(n);
+
+            s = obj.denormz(obj.Xtraining(i, 1:4));
+
         end
         
     end

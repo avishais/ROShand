@@ -101,7 +101,7 @@ class KDE_failure():
         sa = np.array(req.StateAction)
 
         p, fail = self.probability(sa)
-        print p, fail
+        # print p, fail
         return {'fail': fail, 'probability': p[1]} # returns whether failed and the probability
 
 

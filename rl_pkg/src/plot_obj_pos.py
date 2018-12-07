@@ -16,6 +16,7 @@ class Plot():
     start_pos = np.array([0.,0.])
     freq = 15
     goal = np.array([0.,0.])
+    clear = False
 
     def callbackObj(self, msg):
         self.obj_pos = np.array(msg.data)
@@ -23,7 +24,9 @@ class Plot():
         self.obj_pos = self.obj_pos[:2]*1000 # m to mm
 
         if self.counter % 10 == 0:
-            plt.gcf().clear()
+            if self.clear:
+                plt.gcf().clear()
+                self.clear = False
             plt.plot(self.obj_pos[0], self.obj_pos[1],'.r')
             # plt.plot(self.start_pos[0], self.start_pos[1],'*b')
             plt.plot(self.goal[0], self.goal[1],'*g')
@@ -39,6 +42,10 @@ class Plot():
 
         if self.counter <= 5:
             self.start_pos = self.obj_pos
+
+    def callbackPlot(self, msg):
+        self.clear = True
+        return EmptyResponse()
 
     def callbackGoal(self, msg):
         self.goal = np.array(msg.data)
