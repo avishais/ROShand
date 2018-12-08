@@ -10,7 +10,7 @@ from std_msgs.msg import Float64MultiArray, Float32MultiArray, Int16, String
 from std_srvs.srv import SetBool, Empty, EmptyResponse
 from rl_pkg.srv import TargetAngles, IsDropped, observation
 
-np.random.seed(0)
+# np.random.seed(0)
 
 state_dim = 4
 control_dim = 2
@@ -21,7 +21,7 @@ controller = RbfController(state_dim=state_dim, control_dim=control_dim, num_bas
 
 class pilco_node():
     goal = np.array([-8.8831,  118.6027,    9.6664,   10.5664 ])
-    max_steps = 400
+    max_steps = 10
     stop_distance = 5.
 
     def __init__(self):
@@ -34,16 +34,18 @@ class pilco_node():
         self.move_srv = rospy.ServiceProxy('/RL/MoveGripper', TargetAngles)
         self.drop_srv = rospy.ServiceProxy('/RL/IsObjDropped', IsDropped)
         self.obs_srv = rospy.ServiceProxy('/RL/observation', observation)
-        clear_srv = rospy.ServiceProxy('/plot/clear', Empty)
+        self.plot_srv = rospy.ServiceProxy('/plot/plot', Empty)
+        self.clear_srv = rospy.ServiceProxy('/plot/clear', Empty)
 
         pub_goal = rospy.Publisher('/RL/Goal', Float32MultiArray, queue_size=10)
+        self.pub_act = rospy.Publisher('/RL/action', Float32MultiArray, queue_size=10)
         msg = Float32MultiArray()
 
         msg.data = self.goal
         # Initial random rollouts to generate a dataset
-        X,Y = self.rollout(policy=self.random_policy, steps=self.max_steps)
-        for i in range(1,10):
-            X_, Y_ = self.rollout(policy=self.random_policy, steps=self.max_steps)
+        X,Y = self.rollout(policy=self.random_policy, steps=10)
+        for i in range(1,3):
+            X_, Y_ = self.rollout(policy=self.random_policy, steps=10)
             X = np.vstack((X, X_))
             Y = np.vstack((Y, Y_))
 
@@ -69,13 +71,12 @@ class pilco_node():
             iter += 1
             self.pilco.optimize()
             # import pdb; pdb.set_trace()
-            clear_srv()
             X_new, Y_new = self.rollout(policy=self.pilco_policy, steps=self.max_steps)
             # Update dataset
             X = np.vstack((X, X_new)); Y = np.vstack((Y, Y_new))
             self.pilco.mgpr.set_XY(X, Y)
-            print('[pilco_node] Iteration ' + str(iter) + ', reached:' + str(X_new[-1,:2]+Y_new[-1,:]) + ', distance: ' + str( np.linalg.norm((X_new[-1,:2]+Y_new[-1,:])-self.goal) ))
-            if np.linalg.norm(self.goal-X_new[-1,:2]) < self.stop_distance:
+            print('[pilco_node] Iteration ' + str(iter) + ', reached:' + str(X_new[-1,:state_dim]+Y_new[-1,:]) + ', distance: ' + str( np.linalg.norm((X_new[-1,:state_dim]+Y_new[-1,:])-self.goal) ))
+            if np.linalg.norm(self.goal-X_new[-1,:state_dim]) < self.stop_distance:
                 print('[pilco_node] Goal reached after %d iterations!'%iter)
                 self.save()
                 break
@@ -86,7 +87,7 @@ class pilco_node():
         plt.figure()
         plt.plot(X[:,0], X[:,1],'-k')
         plt.plot(self.goal[0], self.goal[1],'og')
-        xend = X[-1,:2] + Y[-1,:]
+        xend = X[-1,:state_dim] + Y[-1,:]
         plt.plot(xend[0], xend[1],'ob')
         plt.axis('equal')
         plt.xlabel('x')
@@ -99,6 +100,7 @@ class pilco_node():
         print('[pilco_node] Rollout...')        
 
         # Reset system
+        # self.clear_srv()
         self.reset_srv()
         while not self.gripper_closed:
             self.rate.sleep()
@@ -110,11 +112,19 @@ class pilco_node():
 
             # Choose action
             u = policy(x)
+            print('u: ', u)
+
+            msg = Float32MultiArray()
+            msg.data = u
+            self.pub_act.publish(msg)
 
             # Act
-            suc = self.move_srv(u)
-            rospy.sleep(0.05)
-            self.rate.sleep()
+            for _ in range(15):
+                suc = self.move_srv(u)
+                rospy.sleep(0.05)
+                self.rate.sleep()
+                if not suc:
+                    break
 
             fail = self.drop_srv().dropped # Check if dropped - end of episode
 
@@ -132,12 +142,14 @@ class pilco_node():
 
             self.rate.sleep()
 
+        # self.plot_srv()
         return np.stack(X), np.stack(Y)
 
     def random_policy(self, x):
         return np.random.uniform(-1.,1.,2)
 
     def pilco_policy(self, x):
+        print('x: ', x)
         return self.pilco.compute_action(x[None, :])[0, :]
 
     def callbackGripperStatus(self, msg):

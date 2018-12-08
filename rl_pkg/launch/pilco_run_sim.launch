@@ -10,6 +10,6 @@
        args="record -O /home/pracsys/Dropbox/transfer/F  /gripper/load /gripper/pos /hand/obj_pos"
        if="$(arg recordData)" />
 
-  <node pkg="rl_pkg" type="plot_obj_pos.py" name="Plot" output="screen"></node>
+  <!-- <node pkg="rl_pkg" type="plot_obj_pos_pilco.py" name="Plot" output="screen"></node> -->
 
 </launch>

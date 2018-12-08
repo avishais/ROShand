@@ -66,7 +66,7 @@ class PILCO(gpflow.models.Model):
         optimizer = gpflow.train.ScipyOptimizer(options={'maxfun': 500})
         optimizer.minimize(self, disp=True)
         end = time.time()
-        print("Finished with Controller's optimization in5%.1f seconds" % (end - start))
+        print("Finished with Controller's optimization in %.1f seconds" % (end - start))
 
         lengthscales = {}; variances = {}; noises = {};
         i = 0
@@ -87,6 +87,7 @@ class PILCO(gpflow.models.Model):
 
     @gpflow.autoflow((float_type,[None, None]))
     def compute_action(self, x_m):
+        print('x_m: ', x_m)
         return self.controller.compute_action(x_m, tf.zeros([self.state_dim, self.state_dim], float_type))[0]
 
     def predict(self, m_x, s_x, n):

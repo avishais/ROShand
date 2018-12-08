@@ -14,21 +14,29 @@ class Plot():
     counter = 0
     obj_pos = np.array([0.,0.])
     start_pos = np.array([0.,0.])
-    freq = 15
+    freq = 5
     goal = np.array([0.,0.])
     clear = False
+    memory = np.empty((0,2), float)
+    memory_new = np.empty((0,2), float)
 
     def callbackObj(self, msg):
         self.obj_pos = np.array(msg.data)
-
         self.obj_pos = self.obj_pos[:2]*1000 # m to mm
 
-        if self.counter % 100 == 0:
+        self.memory_new = np.append(self.memory_new, [self.obj_pos], axis=0)
+
+        if self.counter % 100 == 0 and self.memory.shape[0] > 0:
+            # print(self.memory.shape)
             if self.clear:
                 plt.gcf().clear()
+                plt.close()
+                plt.figure()
+                rospy.sleep(.1)
                 self.clear = False
-            plt.plot(self.obj_pos[0], self.obj_pos[1],'.r')
-            # plt.plot(self.start_pos[0], self.start_pos[1],'*b')
+            plt.plot(self.memory[:,0], self.memory[:,1],'-r')
+            plt.plot(self.memory[0,0], self.memory[0,1],'*b')
+            plt.plot(self.memory[-1,0], self.memory[-1,1],'*m')
             plt.plot(self.goal[0], self.goal[1],'*g')
             plt.axis("equal")
             plt.axis([-60, 60, 60, 177])
@@ -40,11 +48,16 @@ class Plot():
 
         self.counter += 1
 
-        if self.counter <= 5:
-            self.start_pos = self.obj_pos
+    def callbackClear(self, msg):
+        self.memory = np.empty((0,2), float)
+        return EmptyResponse()
 
     def callbackPlot(self, msg):
+
+        self.memory = np.copy(self.memory_new)
+        self.memory_new = np.empty((0,2), float)
         self.clear = True
+ 
         return EmptyResponse()
 
     def callbackGoal(self, msg):
@@ -54,9 +67,10 @@ class Plot():
         
         rospy.Subscriber('/hand/obj_pos', Float32MultiArray, self.callbackObj)
         rospy.Subscriber('/RL/Goal', Float32MultiArray, self.callbackGoal)
-        rospy.Service('/plot/clear', Empty, self.callbackPlot)
+        rospy.Service('/plot/clear', Empty, self.callbackClear)
+        rospy.Service('/plot/plot', Empty, self.callbackPlot)
 
-        rospy.init_node('Plot_obj_pos', anonymous=True)
+        rospy.init_node('Plot_obj_pos_pilco', anonymous=True)
         rate = rospy.Rate(self.freq) # 15hz
         while not rospy.is_shutdown():
             # plt.show()
