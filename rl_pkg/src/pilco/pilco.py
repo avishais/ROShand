@@ -87,7 +87,6 @@ class PILCO(gpflow.models.Model):
 
     @gpflow.autoflow((float_type,[None, None]))
     def compute_action(self, x_m):
-        print('x_m: ', x_m)
         return self.controller.compute_action(x_m, tf.zeros([self.state_dim, self.state_dim], float_type))[0]
 
     def predict(self, m_x, s_x, n):

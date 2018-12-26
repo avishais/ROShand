@@ -97,5 +97,4 @@ class RbfController(MGPR):
         if squash:
             M, S, V2 = squash_sin(M, S, self.max_action)
             V = V @ V2
-        print('M, S, V: ', M, S, V)
         return M, S, V

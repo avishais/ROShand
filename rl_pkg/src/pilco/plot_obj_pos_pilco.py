@@ -30,12 +30,13 @@ class Plot():
             # print(self.memory.shape)
             if self.clear:
                 plt.gcf().clear()
-                plt.close()
-                plt.figure()
+                # plt.close()
+                # plt.figure()
                 rospy.sleep(.1)
                 self.clear = False
             plt.plot(self.memory[:,0], self.memory[:,1],'-r')
             plt.plot(self.memory[0,0], self.memory[0,1],'*b')
+            circle=plt.Circle((self.memory[-1,0],self.memory[-1,1]),2)
             plt.plot(self.memory[-1,0], self.memory[-1,1],'*m')
             plt.plot(self.goal[0], self.goal[1],'*g')
             plt.axis("equal")
@@ -49,13 +50,14 @@ class Plot():
         self.counter += 1
 
     def callbackClear(self, msg):
-        self.memory = np.empty((0,2), float)
+        # self.memory = np.empty((0,2), float)
+        self.memory_new = np.empty((0,2), float)
         return EmptyResponse()
 
     def callbackPlot(self, msg):
 
         self.memory = np.copy(self.memory_new)
-        self.memory_new = np.empty((0,2), float)
+        # self.memory_new = np.empty((0,2), float)
         self.clear = True
  
         return EmptyResponse()
@@ -66,7 +68,7 @@ class Plot():
     def __init__(self):
         
         rospy.Subscriber('/hand/obj_pos', Float32MultiArray, self.callbackObj)
-        rospy.Subscriber('/RL/Goal', Float32MultiArray, self.callbackGoal)
+        rospy.Subscriber('/RL/goal', Float32MultiArray, self.callbackGoal)
         rospy.Service('/plot/clear', Empty, self.callbackClear)
         rospy.Service('/plot/plot', Empty, self.callbackPlot)
 

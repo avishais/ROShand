@@ -66,7 +66,11 @@ class ExponentialReward(Reward):
 class ExponentialRewardPosition(Reward):
     def __init__(self, state_dim, W=None, t=None):
         Reward.__init__(self)
+
         self.state_dim = state_dim-2
+        state_dim = self.state_dim
+        t = t[:self.state_dim]
+
         if W is not None:
             self.W = Param(np.reshape(W, (state_dim, state_dim)), trainable=False)
         else:
@@ -75,6 +79,7 @@ class ExponentialRewardPosition(Reward):
             self.t = Param(np.reshape(t, (1, state_dim)), trainable=False)
         else:
             self.t = Param(np.zeros((1, state_dim)), trainable=False)
+
 
     @params_as_tensors
     def compute_reward(self, m, s):
@@ -90,8 +95,8 @@ class ExponentialRewardPosition(Reward):
         '''
         # TODO: Clean up this
 
-        m = m[:self.state_dim]
-        s = s[:self.state_dim]
+        m = m[:,:self.state_dim]
+        s = s[:self.state_dim,:self.state_dim]
 
         SW = s @ self.W
 
