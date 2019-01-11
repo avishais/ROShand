@@ -81,7 +81,7 @@ class runPG():
                     action = self.RL.choose_action(obs)
 
                     # Act
-                    suc = move_srv(self.A[action])
+                    suc = move_srv(self.A[action]).success
                     rospy.sleep(0.05)
                     rate.sleep()
 

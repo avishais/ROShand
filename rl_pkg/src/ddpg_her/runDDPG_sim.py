@@ -101,7 +101,7 @@ class runDDPG():
 
                         # Act
                         for _ in range(int(max(np.round((action[2]+1.)/2*10), 1))):
-                            suc = move_srv(action[:2])
+                            suc = move_srv(action[:2]).success
                             rospy.sleep(0.05)
                             rate.sleep()
                             if not suc:

@@ -14,12 +14,12 @@ class collect_data():
 
     gripper_closed = False
     stCollecting = True # Enable collection
-    discrete_actions = False # Discrete or continuous actions
+    discrete_actions = True # Discrete or continuous actions
 
     num_episodes = 20000
     episode_length = 10000
 
-    texp = transition_experience()
+    texp = transition_experience(Load=True, discrete = discrete_actions)
 
     def __init__(self):
         rospy.init_node('collect_data', anonymous=True)
@@ -48,7 +48,7 @@ class collect_data():
                     while not self.gripper_closed:
                         rate.sleep()
 
-                    print('[collect_data] Episode %d (%d points so far).'%(n, self.texp.getSize()))
+                    print('[collect_data] Episode %d (%d points so far).'%(n+1, self.texp.getSize()))
 
                     Done = False
 
@@ -57,13 +57,13 @@ class collect_data():
 
                         # Get observation and choose action
                         state = np.array(obs_srv().state)
-                        action = self.choose_action()
+                        action = np.array([-1.,1.])#self.choose_action()
                         
                         for _ in range( np.random.randint(200) ):
                             msg.data = action
                             pub_gripper_action.publish(msg)
-                            suc = move_srv(action)
-                            rospy.sleep(0.05)
+                            suc = move_srv(action).success
+                            rospy.sleep(0.2)
                             rate.sleep()
 
                             # Get observation
@@ -90,7 +90,7 @@ class collect_data():
                         self.stCollecting = False
                         print('Finished running %d episodes!' % self.num_episodes)
 
-                    if n % 20 == 0:
+                    if n > 0 and n % 20 == 0:
                         self.texp.save()
                 
                 self.texp.save()             

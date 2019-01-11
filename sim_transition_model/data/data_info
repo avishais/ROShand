@@ -1,0 +1,31 @@
+transition_data_discrete:
+	joint_damping_coefficient 5.0
+	joint_friction_coefficient 0.0
+	action delay 0.05
+	real_time_update_rate 1000.0
+
+transition_data_discrete_v2:
+	joint_damping_coefficient 5.0
+	joint_friction_coefficient 0.0
+	action delay 0.3
+	real_time_update_rate 1000.0
+
+transition_data_discrete_v3:
+	joint_damping_coefficient 7.0
+	joint_friction_coefficient 0.4
+	action delay 0.1
+	real_time_update_rate 0.0
+
+transition_data_discrete_v4:
+	joint_damping_coefficient 7.0
+	joint_friction_coefficient 0.0
+	action delay 0.1
+	real_time_update_rate 0.0
+
+transition_data_discrete_v5:
+	joint_damping_coefficient 7.0
+	joint_friction_coefficient 0.0
+	action delay 0.15
+	real_time_update_rate 2000.0
+	proximal_finger_damping_coefficient 6.0
+	distal_finger_damping_coefficient 6.0

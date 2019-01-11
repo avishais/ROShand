@@ -1,9 +1,9 @@
 <launch>
   <!-- Requires Python3 - source relavent venv -->
 
-  <arg name="recordData" default="true" />
+  <arg name="recordData" default="false" />
 
-  <node pkg="rl_pkg" name="hand_control" type="hand_control_sim.py" output="screen"></node>
+  <node pkg="sim_transition_model" name="hand_control" type="hand_control_sim.py" output="screen"></node>
   <node pkg="sim_transition_model" name="collect" type="collect_data.py" output="screen"/>
 
   <node pkg="rosbag" type="record" name="rosbag_record_data"

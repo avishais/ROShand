@@ -93,7 +93,7 @@ class runDDPG():
                         action = agent.choose_action([state], [goal], self.variance)
 
                         # Act
-                        suc = move_srv(action[:2])
+                        suc = move_srv(action[:2]).success
 
                         if suc:
                             # Get observation

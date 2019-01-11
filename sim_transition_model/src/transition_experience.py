@@ -15,7 +15,8 @@ class transition_experience():
         else:
             self.mode = 'cont'
         
-        self.file_name = self.path + 'transition_data_' + self.mode + '.obj'
+        self.file = 'transition_data_' + self.mode + '_v5'
+        self.file_name = self.path + self.file + '.obj'
 
         if Load:
             self.load()
@@ -95,7 +96,7 @@ class transition_experience():
 
     def save_to_file(self):
 
-        filen = self.path + 'transition_data_' + self.mode + '.db'
+        filen = self.path + self.file + '.db'
 
         n = self.getSize()
 
