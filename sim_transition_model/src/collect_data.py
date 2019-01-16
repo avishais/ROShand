@@ -57,9 +57,17 @@ class collect_data():
 
                         # Get observation and choose action
                         state = np.array(obs_srv().state)
-                        action = np.array([-1.,1.])#self.choose_action()
+                        action = self.choose_action()
+
+                        if np.random.uniform() > 0.5:
+                            if np.random.uniform() > 0.6:
+                                num_steps = np.random.randint(200)
+                            else:
+                                num_steps = np.random.randint(80)
+                        else:
+                            num_steps = np.random.randint(20)
                         
-                        for _ in range( np.random.randint(200) ):
+                        for _ in range( num_steps ):
                             msg.data = action
                             pub_gripper_action.publish(msg)
                             suc = move_srv(action).success
